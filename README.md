@@ -19,7 +19,7 @@
 ![KiCad](https://img.shields.io/badge/KiCad-10.0.3-314CB0?style=for-the-badge&logo=kicad&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
 
-**Author:** [Sachin Rathnayaka (WRSCN)](https://github.com/SachinRathnayaka) &nbsp;·&nbsp; **Repository:** [Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System) &nbsp;·&nbsp; **Live Demo:** [Web Dashboard](https://sachinrathnayaka.github.io/Smart-Aquarium-Monitor-Control-System/)
+**Author:** [Sachin Rathnayaka](https://github.com/SachinRathnayaka) &nbsp;·&nbsp; **Repo:** [Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System) &nbsp;·&nbsp; **Live Demo:** [Web Dashboard](https://sachinrathnayaka.github.io/Smart-Aquarium-Monitor-Control-System/)
 
 </div>
 

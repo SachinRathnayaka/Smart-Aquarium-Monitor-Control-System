@@ -1,0 +1,28 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.wrscn.sraquaguard.app-mergeDebugResources-2:/values-v31/values-v31.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Sachin\\Desktop\\New folder (2)\\SRAquaGuard-Android\\app\\src\\main\\res\\values-v31\\styles.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "11",
+                        "endColumns": "12",
+                        "endOffsets": "712"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "12",
+                        "endColumns": "12",
+                        "endOffsets": "751"
+                    }
+                }
+            ]
+        }
+    ]
+}

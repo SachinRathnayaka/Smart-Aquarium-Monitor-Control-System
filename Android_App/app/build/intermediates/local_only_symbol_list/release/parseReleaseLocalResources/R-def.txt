@@ -1,0 +1,6 @@
+R_DEF: Internal format may change without notice
+local
+color sraqua_cyan
+color sraqua_slate
+drawable sraqua_logo
+style Theme.SRAquaGuard

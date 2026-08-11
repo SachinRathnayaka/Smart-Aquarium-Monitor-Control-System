@@ -1,0 +1,69 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.wrscn.sraquaguard.app-debug-4:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "C:\\Users\\Sachin\\Desktop\\New folder (2)\\SRAquaGuard-Android\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "0,0",
+                        "startColumns": "53,11",
+                        "startOffsets": "53,11",
+                        "endColumns": "94,53",
+                        "endOffsets": "94,53"
+                    },
+                    "to": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,101",
+                        "endColumns": "45,46",
+                        "endOffsets": "96,143"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\Sachin\\Desktop\\New folder (2)\\SRAquaGuard-Android\\app\\src\\main\\res\\values\\styles.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "9",
+                        "endColumns": "12",
+                        "endOffsets": "548"
+                    },
+                    "to": {
+                        "startLines": "4",
+                        "startColumns": "4",
+                        "startOffsets": "148",
+                        "endLines": "12",
+                        "endColumns": "12",
+                        "endOffsets": "680"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.wrscn.sraquaguard.app-debug-4:/values-v31_values-v31.arsc.flat",
+            "map": [
+                {
+                    "source": "C:\\Users\\Sachin\\Desktop\\New folder (2)\\SRAquaGuard-Android\\app\\src\\main\\res\\values-v31\\styles.xml",
+                    "from": {
+                        "startLines": "1",
+                        "startColumns": "4",
+                        "startOffsets": "16",
+                        "endLines": "11",
+                        "endColumns": "12",
+                        "endOffsets": "712"
+                    },
+                    "to": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "12",
+                        "endColumns": "12",
+                        "endOffsets": "751"
+                    }
+                }
+            ]
+        }
+    ]
+}

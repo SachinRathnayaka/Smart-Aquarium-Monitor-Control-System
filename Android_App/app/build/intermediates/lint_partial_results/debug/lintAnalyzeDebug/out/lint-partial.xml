@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="partial_results">
+    <map id="UnsafeIntentLaunch">
+            <map id="unprotected">
+                <entry
+                    name="com.wrscn.sraquaguard.MainActivity"
+                    boolean="true"/>
+            </map>
+    </map>
+    <map id="UnusedResources">
+        <location id="R.color.sraqua_cyan"
+            file="${:app*debug*MAIN*sourceProvider*0*resDir*0}/values/colors.xml"
+            line="1"
+            column="61"
+            startOffset="60"
+            endLine="1"
+            endColumn="79"
+            endOffset="78"/>
+        <entry
+            name="model"
+            string="color[sraqua_slate(U),sraqua_cyan(D)],drawable[sraqua_logo(U)],style[Theme_SRAquaGuard(U)];3^0^2;;;"/>
+    </map>
+
+</incidents>

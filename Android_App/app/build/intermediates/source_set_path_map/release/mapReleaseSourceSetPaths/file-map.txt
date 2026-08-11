@@ -1,0 +1,7 @@
+com.wrscn.sraquaguard.app-pngs-0 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\build\generated\res\pngs\release
+com.wrscn.sraquaguard.app-resValues-1 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\build\generated\res\resValues\release
+com.wrscn.sraquaguard.app-packageReleaseResources-2 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+com.wrscn.sraquaguard.app-packageReleaseResources-3 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+com.wrscn.sraquaguard.app-release-4 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\build\intermediates\merged_res\release\mergeReleaseResources
+com.wrscn.sraquaguard.app-main-5 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\res
+com.wrscn.sraquaguard.app-release-6 C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\release\res

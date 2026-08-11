@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app"
+    name=":app"
+    type="APP"
+    maven="SRAquaGuard:app:unspecified"
+    agpVersion="8.6.1"
+    buildFolder="build"
+    bootClassPath="C:\Users\Sachin\AppData\Local\Android\Sdk\platforms\android-35\android.jar;C:\Users\Sachin\AppData\Local\Android\Sdk\build-tools\34.0.0\core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-35"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="debug"/>
+</lint-module>

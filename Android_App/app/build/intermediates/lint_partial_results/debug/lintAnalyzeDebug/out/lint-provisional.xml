@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<incidents format="6" by="lint 8.6.1" type="conditional_incidents">
+
+    <incident
+        id="UnusedAttribute"
+        severity="warning"
+        message="">
+        <fix-data minSdk="ffffffffffc00000" requiresApi="ffffffffff800000"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="4"
+            column="197"
+            startOffset="372"
+            endLine="4"
+            endColumn="230"
+            endOffset="405"/>
+        <map>
+            <api-levels id="minSdk"
+                value="ffffffffffc00000"/>
+            <api-levels id="requiresApi"
+                value="ffffffffff800000"/>
+            <entry
+                name="message"
+                string="Attribute `resizeableActivity` is only used in API level 24 and higher (current min is %1$s)"/>
+        </map>
+    </incident>
+
+    <incident
+        id="LockedOrientationActivity"
+        severity="warning"
+        message="Expecting `android:screenOrientation=&quot;unspecified&quot;` or `&quot;fullSensor&quot;` for this activity so the user can use the application in any orientation and provide a great experience on Chrome OS devices">
+        <fix-attribute
+            description="Set screenOrientation=&quot;fullSensor&quot;"
+            robot="true"
+            independent="true"
+            namespace="http://schemas.android.com/apk/res/android"
+            attribute="screenOrientation"
+            value="fullSensor"/>
+        <location
+            file="${:app*debug*MAIN*sourceProvider*0*manifest*0}"
+            line="5"
+            column="48"
+            startOffset="454"
+            endLine="5"
+            endColumn="84"
+            endOffset="490"/>
+        <map>
+            <condition library="false"/>
+        </map>
+    </incident>
+
+</incidents>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sraqua_cyan">#22d3ee</color>
+    <color name="sraqua_slate">#0f172a</color>
+    <style name="Theme.SRAquaGuard" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorAccent">#22d3ee</item>
+        <item name="android:navigationBarColor">#0f172a</item>
+        <item name="android:statusBarColor">#0f172a</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/sraqua_slate</item>
+    </style>
+</resources>

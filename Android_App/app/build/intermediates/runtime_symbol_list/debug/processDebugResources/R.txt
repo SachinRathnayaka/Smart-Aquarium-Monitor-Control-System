@@ -1,0 +1,4 @@
+int color sraqua_cyan 0x7f010000
+int color sraqua_slate 0x7f010001
+int drawable sraqua_logo 0x7f020000
+int style Theme_SRAquaGuard 0x7f030000

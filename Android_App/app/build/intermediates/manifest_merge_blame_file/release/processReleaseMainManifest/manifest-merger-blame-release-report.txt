@@ -1,0 +1,51 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.wrscn.sraquaguard"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="23"
+9        android:targetSdkVersion="35" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:3:5-67
+11-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:3:22-64
+12
+13    <application
+13-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:5-11:19
+14        android:extractNativeLibs="false"
+15        android:hardwareAccelerated="true"
+15-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:162-196
+16        android:icon="@drawable/sraqua_logo"
+16-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:88-124
+17        android:label="SRAqua Guard"
+17-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:59-87
+18        android:resizeableActivity="true"
+18-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:197-230
+19        android:theme="@style/Theme.SRAquaGuard"
+19-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:18-58
+20        android:usesCleartextTraffic="false" >
+20-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4:125-161
+21        <activity
+21-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5:9-10:20
+22            android:name="com.wrscn.sraquaguard.MainActivity"
+22-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5:19-47
+23            android:exported="true"
+23-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5:85-108
+24            android:screenOrientation="portrait" >
+24-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5:48-84
+25            <intent-filter>
+25-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:6:13-9:29
+26                <action android:name="android.intent.action.MAIN" />
+26-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:7:17-69
+26-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:7:25-66
+27
+28                <category android:name="android.intent.category.LAUNCHER" />
+28-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:8:17-77
+28-->C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:8:27-74
+29            </intent-filter>
+30        </activity>
+31    </application>
+32
+33</manifest>

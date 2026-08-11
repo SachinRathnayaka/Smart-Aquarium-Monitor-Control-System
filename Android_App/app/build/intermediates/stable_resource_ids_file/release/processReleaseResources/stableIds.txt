@@ -1,0 +1,4 @@
+com.wrscn.sraquaguard:style/Theme.SRAquaGuard = 0x7f030000
+com.wrscn.sraquaguard:drawable/sraqua_logo = 0x7f020000
+com.wrscn.sraquaguard:color/sraqua_slate = 0x7f010001
+com.wrscn.sraquaguard:color/sraqua_cyan = 0x7f010000

@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SRAqua Guard — Ultimate Cinematic Dashboard Pro</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Firebase Compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --primary-h: 199; --primary-s: 89%; --primary-l: 48%;
+      --bg-a: #020617; --bg-b: #0f172a; --text-scale: 1;
+    }
+    * { box-sizing: border-box; }
+    html, body { overflow-x: hidden; width: 100%; margin: 0; padding: 0; height: 100%; }
+    html { font-size: calc(16px * var(--text-scale)); scroll-behavior: smooth; }
+    body {
+      min-height: 100vh; color: #f8fafc;
+      background: linear-gradient(180deg, var(--bg-a) 0%, var(--bg-b) 100%);
+      font-family: Inter, "Segoe UI", sans-serif;
+      transition: background 0.5s ease;
+    }
+    
+    /* 🚨 Critical Red Blink Animation */
+    body.critical-alert-bg { animation: alertBorderBlink 1.5s infinite; }
+    @keyframes alertBorderBlink {
+      0%, 100% { box-shadow: inset 0 0 0px 0px rgba(239, 68, 68, 0); }
+      50% { box-shadow: inset 0 0 0px 8px rgba(239, 68, 68, 0.6), inset 0 0 80px rgba(239, 68, 68, 0.15); background-color: rgba(20, 5, 5, 0.9); }
+    }
+
+    /* Cinematic Background Layers */
+    .cinematic-bg {
+      position: fixed; inset: 0; z-index: -5; background-size: cover; background-position: top center;
+      opacity: 0.25; filter: blur(12px) saturate(1.2); transition: background-image 0.5s, transform 0.2s ease-out; pointer-events: none;
+    }
+    .water-overlay { position: fixed; inset: 0; z-index: -4; background: radial-gradient(circle at 50% 0%, hsla(var(--primary-h), var(--primary-s), 50%, 0.15), transparent 70%); pointer-events: none; }
+    .sea-bottom {
+      position: fixed; bottom: 0; left: 0; right: 0; height: 250px; z-index: -3;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320"><path fill="%230f172a" fill-opacity="0.8" d="M0,224L48,229.3C96,235,192,245,288,218.7C384,192,480,128,576,133.3C672,139,768,213,864,229.3C960,245,1056,203,1152,176C1248,149,1344,139,1392,133.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path></svg>') no-repeat bottom;
+      background-size: cover; transition: transform 0.1s ease-out; pointer-events: none; opacity: 0.6;
+    }
+
+    /* Fish & Jellyfish CSS */
+    #fishLayer { position: fixed; inset: 0; pointer-events: none; z-index: -2; overflow: hidden; }
+    .fish-type-1 { position: absolute; width: 45px; height: 20px; filter: drop-shadow(0 0 8px rgba(34,211,238,0.4)); will-change: transform; }
+    .fish-type-1 .body { position: absolute; width: 30px; height: 16px; left: 8px; border-radius: 50%; background: linear-gradient(90deg, #38bdf8, #2563eb); }
+    .fish-type-1 .tail { position: absolute; width: 12px; height: 12px; left: 0; top: 2px; transform: rotate(45deg); background: #0ea5e9; animation: tailWag 0.3s infinite alternate; }
+    .fish-type-2 { position: absolute; width: 60px; height: 25px; filter: drop-shadow(0 0 10px rgba(251,146,60,0.4)); will-change: transform; }
+    .fish-type-2 .body { position: absolute; width: 40px; height: 22px; left: 10px; border-radius: 50% 40% 40% 50%; background: linear-gradient(90deg, #fb923c, #ea580c); }
+    .fish-type-2 .tail { position: absolute; width: 15px; height: 18px; left: 0; top: 2px; background: #f97316; clip-path: polygon(100% 50%, 0 0, 0 100%); animation: tailWag 0.4s infinite alternate; }
+    .jellyfish { position: absolute; width: 30px; height: 50px; will-change: transform; filter: drop-shadow(0 0 12px rgba(167,139,250,0.6)); }
+    .jellyfish .dome { position: absolute; width: 30px; height: 20px; background: rgba(167,139,250,0.6); border-radius: 30px 30px 5px 5px; backdrop-filter: blur(2px); animation: pulseJelly 3s infinite alternate; }
+    .jellyfish .tentacles { position: absolute; top: 20px; width: 30px; height: 30px; border-bottom: 2px dashed rgba(167,139,250,0.4); animation: swimTentacles 2s infinite alternate; }
+    @keyframes tailWag { from { transform: scaleX(1) rotate(0deg); } to { transform: scaleX(0.8) rotate(10deg); } }
+    @keyframes pulseJelly { from { transform: scale(1); } to { transform: scale(1.1, 0.9); } }
+    @keyframes swimTentacles { from { height: 30px; opacity: 0.5; } to { height: 40px; opacity: 1; } }
+
+    /* Glassmorphism Styles */
+    .glass { background: linear-gradient(145deg, rgba(30,41,59,0.5), rgba(15,23,42,0.7)); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-radius: 1.25rem; box-shadow: 0 10px 30px rgba(0,0,0,0.3); transition: transform 0.2s, box-shadow 0.2s; }
+    .glass-clickable:hover { transform: translateY(-4px); cursor: pointer; box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 15px hsla(var(--primary-h), var(--primary-s), 50%, 0.2); border-color: hsla(var(--primary-h), var(--primary-s), 60%, 0.4); }
+    .neon-text { color: hsla(var(--primary-h), var(--primary-s), 70%, 1); text-shadow: 0 0 10px hsla(var(--primary-h), var(--primary-s), 50%, 0.5); }
+    .neon-border { box-shadow: inset 0 0 0 1px hsla(var(--primary-h), var(--primary-s), 50%, 0.3), 0 0 20px hsla(var(--primary-h), var(--primary-s), 50%, 0.1); }
+    .active-theme { border-color: #22d3ee !important; box-shadow: 0 0 15px rgba(34,211,238,0.4); }
+
+    /* Badges & Toggles */
+    .pill { background: rgba(30,41,59,0.6); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 0.5rem 0.85rem; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; color: #cbd5e1; backdrop-filter: blur(8px); transition: all 0.2s; cursor: pointer; }
+    .pill:hover { background: rgba(51,65,85,0.8); color: white; border-color: rgba(34,211,238,0.4); }
+    .pill-alert { background: rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.5); color: #fca5a5; animation: pulseRed 1.5s infinite; cursor: default; }
+    @keyframes pulseRed { 0%, 100% { box-shadow: 0 0 5px rgba(239,68,68,0.2); } 50% { box-shadow: 0 0 15px rgba(239,68,68,0.6); } }
+    
+    .toggle { position: relative; width: 50px; height: 28px; border-radius: 999px; background: rgba(51,65,85,0.8); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
+    .toggle::after { content: ""; position: absolute; top: 2px; left: 2px; width: 22px; height: 22px; border-radius: 50%; background: #94a3b8; transition: 0.3s; pointer-events: none;}
+    input:checked + .toggle { background: hsla(var(--primary-h), var(--primary-s), 45%, 0.4); border-color: hsla(var(--primary-h), var(--primary-s), 60%, 0.8); }
+    input:checked + .toggle::after { transform: translateX(22px); background: #fff; box-shadow: 0 0 10px hsla(var(--primary-h), var(--primary-s), 60%, 0.8); }
+    
+    .btn-primary { background: linear-gradient(135deg, hsla(var(--primary-h), var(--primary-s), 45%, 1), hsla(calc(var(--primary-h)+20), 80%, 55%, 1)); color: #fff; border: none; box-shadow: 0 4px 15px hsla(var(--primary-h), var(--primary-s), 40%, 0.4); transition: all 0.2s; cursor: pointer; }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 6px 20px hsla(var(--primary-h), var(--primary-s), 40%, 0.6); }
+    
+    .mic-active { background: rgba(34, 211, 238, 0.2) !important; color: #67e8f9 !important; border-color: rgba(34, 211, 238, 0.6) !important; box-shadow: 0 0 15px rgba(34, 211, 238, 0.4); }
+
+    /* Modals & Toasts */
+    .modal-backdrop { background: rgba(2,6,23,0.85); backdrop-filter: blur(8px); }
+    .toast { border-radius: 12px; background: rgba(15,23,42,0.95); border: 1px solid rgba(255,255,255,0.1); padding: 12px 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); animation: slideIn 0.3s ease forwards; pointer-events: auto;}
+    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    .chart-container { position: relative; height: 250px; width: 100%; }
+    
+    /* Custom Elements */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: rgba(15,23,42,0.5); }
+    ::-webkit-scrollbar-thumb { background: rgba(148,163,184,0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: hsla(var(--primary-h), var(--primary-s), 50%, 0.6); }
+    
+    .custom-select {
+        appearance: none; -webkit-appearance: none; -moz-appearance: none;
+        background-image: url('data:image/svg+xml;utf8,<svg fill="%2322d3ee" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+        background-repeat: no-repeat; background-position: right 12px center;
+        padding-right: 40px !important; cursor: pointer;
+    }
+    .custom-select option { background: #0f172a; color: #fff; font-size: 16px; padding: 10px;}
+    
+    .day-btn { width: 34px; height: 34px; border-radius: 50%; border: 1px solid #334155; color: #94a3b8; font-size: 13px; font-weight: bold; background: #0f172a; transition: 0.2s; cursor: pointer; display: flex; align-items: center; justify-content: center;}
+    .day-btn.active { border-color: #22d3ee; background: rgba(34, 211, 238, 0.2); color: #22d3ee; box-shadow: 0 0 10px rgba(34, 211, 238, 0.2); }
+  </style>
+</head>
+<body>
+  
+  <div id="cinematicBg" class="cinematic-bg"></div>
+  <div class="water-overlay"></div>
+  <div id="seaBottom" class="sea-bottom"></div>
+  <div id="fishLayer"></div>
+  
+  <!-- 🚨 COMPACT WARNING BANNER -->
+  <div id="criticalWarningBanner" class="fixed top-4 left-1/2 -translate-x-1/2 z-[110] hidden pointer-events-none transition-all duration-500 transform -translate-y-full opacity-0">
+    <div class="flex items-center gap-3 bg-rose-900/80 backdrop-blur-md border border-rose-500 rounded-2xl px-6 py-3 shadow-[0_4px_20px_rgba(244,63,94,0.3)] animate-pulse">
+      <i data-lucide="triangle-alert" class="w-6 h-6 text-rose-400"></i>
+      <div>
+        <h1 class="text-lg font-bold text-white tracking-wide uppercase drop-shadow-md">Warning</h1>
+        <p id="criticalWarningText" class="text-rose-200 font-medium text-sm mt-0.5 whitespace-nowrap"></p>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="fixed top-4 right-4 z-[100] flex flex-col gap-2 w-72 max-w-full pointer-events-none"></div>
+
+  <!-- SETUP MODAL -->
+  <div id="setupModal" class="fixed inset-0 z-[80] flex items-center justify-center p-4 modal-backdrop">
+    <div class="glass neon-border w-full max-w-lg p-7 relative">
+      <div class="flex items-center justify-between mb-4"><h2 class="text-2xl font-bold neon-text">SRAqua Guard Setup</h2><i data-lucide="droplet" class="w-8 h-8 text-cyan-400"></i></div>
+      <p class="text-sm text-slate-300 mb-6">Welcome! Please connect your Firebase Database to sync ESP32 live data, or jump straight into Demo Mode.</p>
+      <div class="space-y-4">
+        <div><label class="text-xs text-slate-400">API Key</label><input id="inp-apiKey" type="text" placeholder="AIzaSyB..." class="w-full mt-1 rounded-lg bg-slate-900/60 border border-slate-600 p-2.5 text-white focus:border-cyan-400 outline-none" /></div>
+        <div><label class="text-xs text-slate-400">Project ID</label><input id="inp-projectId" type="text" placeholder="my-aquarium-123" class="w-full mt-1 rounded-lg bg-slate-900/60 border border-slate-600 p-2.5 text-white focus:border-cyan-400 outline-none" /></div>
+        <div><label class="text-xs text-slate-400">Database URL</label><input id="inp-databaseURL" type="text" placeholder="https://...firebaseio.com" class="w-full mt-1 rounded-lg bg-slate-900/60 border border-slate-600 p-2.5 text-white focus:border-cyan-400 outline-none" /></div>
+      </div>
+      <div class="mt-6 flex flex-col sm:flex-row gap-3">
+        <button onclick="saveSetup()" class="btn-primary flex-1 rounded-xl py-3 font-semibold text-lg">Connect Firebase</button>
+        <button onclick="skipSetup()" class="flex-1 rounded-xl border border-cyan-500/30 bg-slate-800/50 py-3 font-semibold text-cyan-200 hover:bg-slate-700/50 transition">Enter Demo Mode</button>
+      </div>
+      <button onclick="closeSetup()" id="btn-close-setup" class="hidden w-full mt-3 py-2 text-sm text-slate-400 hover:text-white">Cancel</button>
+    </div>
+  </div>
+
+  <!-- VOICE COMMAND HELP MODAL -->
+  <div id="voiceHelpModal" class="fixed inset-0 z-[120] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass w-full max-w-md p-6 relative">
+      <button onclick="closeVoiceHelp()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h2 class="text-lg font-bold text-white mb-4"><i data-lucide="mic" class="inline w-5 h-5 mr-2 text-cyan-400"></i>Voice Commands</h2>
+      <ul class="text-sm text-slate-300 space-y-3 list-disc pl-5 mb-6">
+        <li><strong class="text-cyan-200">"Tell Status" / "Tank Status"</strong> <br><span class="text-xs text-slate-400">AI replies if water is good or bad.</span></li>
+        <li><strong class="text-cyan-200">"Feed"</strong> <br><span class="text-xs text-slate-400">Feeds the fish immediately.</span></li>
+        <li><strong class="text-cyan-200">"Pump on" / "Pump off"</strong> <br><span class="text-xs text-slate-400">Toggles the water pump.</span></li>
+        <li><strong class="text-cyan-200">"Heater on" / "Heater off"</strong> <br><span class="text-xs text-slate-400">Toggles the water heater.</span></li>
+        <li><strong class="text-cyan-200">"Fan on" / "Fan off"</strong> <br><span class="text-xs text-slate-400">Toggles the cooling fan.</span></li>
+        <li><strong class="text-cyan-200">"Lights on" / "Lights off"</strong> <br><span class="text-xs text-slate-400">Toggles the ARGB tank lights.</span></li>
+        <li><strong class="text-cyan-200">"Buzzer on" / "Buzzer off"</strong> <br><span class="text-xs text-slate-400">Toggles the system buzzer manually.</span></li>
+        <li><strong class="text-cyan-200">"Auto Mode" / "Manual Mode"</strong> <br><span class="text-xs text-slate-400">Changes the main operation mode.</span></li>
+      </ul>
+      <button onclick="closeVoiceHelp()" class="w-full btn-primary py-2.5 rounded-lg font-bold">Got it!</button>
+    </div>
+  </div>
+
+  <!-- UNLIMITED AUTO FEED SCHEDULER MODAL (Premium Time Picker) -->
+  <div id="feedScheduleModal" class="fixed inset-0 z-[110] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass w-full max-w-md p-6 relative max-h-[90vh] overflow-hidden flex flex-col">
+      <button onclick="closeFeedScheduler()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <h2 class="text-xl font-bold text-white mb-2"><i data-lucide="calendar-clock" class="inline w-5 h-5 mr-2 text-emerald-400"></i>Auto Feeder Schedules</h2>
+      
+      <!-- List of Schedules -->
+      <div id="scheduleListWrapper" class="overflow-y-auto flex-1 pr-2 mb-4 space-y-3 mt-4">
+          <div id="scheduleList"></div>
+      </div>
+
+      <!-- Add New Schedule Form (Hidden by default) -->
+      <div id="addScheduleForm" class="hidden bg-slate-900/60 border border-slate-700 rounded-xl p-5 mb-4">
+        
+        <!-- Big Clock Preview -->
+        <div class="text-center mb-5">
+            <p id="modalLiveDate" class="text-cyan-400/80 text-xs font-semibold tracking-widest uppercase mb-1">Set new feed time</p>
+            <h1 id="modalLiveTime" class="text-4xl font-light text-white tracking-widest">08:00 AM</h1>
+        </div>
+        
+        <!-- Premium Dropdown Time Picker -->
+        <div class="flex gap-3 mb-5">
+            <div class="flex-1">
+                <label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1 ml-1">Hour</label>
+                <select id="new-feed-h" onchange="updateModalClockPreview()" class="w-full bg-[#0f172a] border border-slate-600 rounded-lg p-3 text-lg font-bold text-white custom-select">
+                    <!-- Options populated via JS (12 AM to 11 PM) -->
+                </select>
+            </div>
+            <div class="flex-1">
+                <label class="block text-[10px] text-slate-400 uppercase tracking-wider mb-1 ml-1">Minute</label>
+                <select id="new-feed-m" onchange="updateModalClockPreview()" class="w-full bg-[#0f172a] border border-slate-600 rounded-lg p-3 text-lg font-bold text-white custom-select">
+                    <!-- Options populated via JS (00 to 59) -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Quick Presets -->
+        <div class="flex justify-between gap-2 mb-5">
+           <button class="flex-1 bg-slate-800 border border-slate-700 hover:border-cyan-500 rounded-lg py-2 text-xs font-semibold text-cyan-300 transition" onclick="setQuickTime(8, 0)">08:00 AM</button>
+           <button class="flex-1 bg-slate-800 border border-slate-700 hover:border-cyan-500 rounded-lg py-2 text-xs font-semibold text-cyan-300 transition" onclick="setQuickTime(12, 0)">12:00 PM</button>
+           <button class="flex-1 bg-slate-800 border border-slate-700 hover:border-cyan-500 rounded-lg py-2 text-xs font-semibold text-cyan-300 transition" onclick="setQuickTime(18, 0)">06:00 PM</button>
+        </div>
+
+        <div class="mb-4">
+          <label class="block text-xs text-slate-400 mb-2">Repeat Days (Optional)</label>
+          <div class="flex justify-between gap-1" id="day-selector">
+              <button class="day-btn" data-day="0">S</button>
+              <button class="day-btn" data-day="1">M</button>
+              <button class="day-btn" data-day="2">T</button>
+              <button class="day-btn" data-day="3">W</button>
+              <button class="day-btn" data-day="4">T</button>
+              <button class="day-btn" data-day="5">F</button>
+              <button class="day-btn" data-day="6">S</button>
+          </div>
+        </div>
+
+        <div class="mb-4">
+            <label class="block text-xs text-slate-400 mb-1">Or Specific Date</label>
+            <input type="date" id="new-feed-date" class="w-full rounded-lg bg-[#0f172a] border border-slate-600 p-2.5 text-white outline-none focus:border-cyan-400 cursor-pointer" />
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-xs text-slate-400 mb-1">Portions (Drops)</label>
+          <select id="new-feed-qty" class="w-full bg-[#0f172a] border border-slate-600 rounded-lg p-3 text-white outline-none custom-select font-semibold">
+            <option value="1">1 Portion</option>
+            <option value="2">2 Portions</option>
+            <option value="3">3 Portions</option>
+            <option value="4">4 Portions</option>
+          </select>
+        </div>
+        
+        <div class="flex gap-3">
+            <button onclick="cancelAddSchedule()" class="flex-1 rounded-xl border border-slate-600 bg-slate-800 py-3 text-sm font-semibold text-slate-300 hover:text-white transition">Cancel</button>
+            <button onclick="saveNewSchedule()" class="flex-1 btn-primary py-3 rounded-xl text-sm font-bold">Save Alarm</button>
+        </div>
+      </div>
+
+      <button id="btnAddNewSchedule" onclick="showAddSchedule()" class="w-full border-2 border-dashed border-slate-600 text-slate-300 hover:text-cyan-300 hover:border-cyan-500/50 bg-slate-800/40 rounded-xl py-3.5 font-semibold transition flex items-center justify-center gap-2">
+          <i data-lucide="plus" class="w-5 h-5"></i> Add New Alarm
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div id="app" class="hidden relative z-10 mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    
+    <!-- 🌟 RESPONSIVE HEADER WITH LIVE VOICE TEXT AREA -->
+    <header class="glass neon-border mb-8 p-6 relative">
+      <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 mb-4 lg:mb-0">
+          <div>
+            <h1 class="text-3xl font-bold tracking-tight text-white drop-shadow-md">SRAqua Guard <span class="neon-text">Dashboard</span></h1>
+            <div class="flex items-center gap-3 mt-1">
+              <p class="text-sm text-slate-400">Smart Aquarium Monitor</p>
+              <span class="text-slate-600">|</span>
+              <p id="liveClock" class="text-sm font-mono text-cyan-300 font-semibold tracking-wider">--/--/---- --:--:--</p>
+            </div>
+          </div>
+          
+          <!-- 🔴 VOICE TEXT DISPLAY AREA 🔴 -->
+          <div id="liveVoiceDisplay" class="hidden lg:flex flex-1 justify-end px-4 mt-2 lg:mt-0">
+              <p id="liveVoiceText" class="text-2xl font-bold text-cyan-300 drop-shadow-[0_0_10px_rgba(34,211,238,0.8)] opacity-0 transition-opacity duration-300"></p>
+          </div>
+      </div>
+
+      <!-- Top Button Bar (Responsive Grid) -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 items-center w-full mt-4 lg:mt-[-35px] lg:flex lg:justify-end lg:w-auto relative z-10">
+        <!-- Voice Button Group -->
+        <div class="flex items-center gap-1 bg-slate-800/40 rounded-full border border-slate-700 p-1 w-full lg:w-auto justify-center col-span-2 sm:col-span-3 lg:col-span-1">
+            <button onclick="toggleVoice()" id="headerVoiceBtn" class="pill bg-transparent border-none text-cyan-200 hover:text-white px-3 transition-all flex-1"><i data-lucide="mic" class="w-4 h-4"></i> <span id="voiceBtnText">Voice Control</span></button>
+            <button onclick="openVoiceHelp()" class="pill bg-slate-700/50 hover:bg-slate-600/50 border-none text-slate-300 px-2.5" title="View Commands"><i data-lucide="help-circle" class="w-4 h-4"></i></button>
+        </div>
+        <button onclick="openSetup()" class="pill w-full lg:w-auto justify-center"><i data-lucide="database" class="w-4 h-4"></i> Setup</button>
+        <span id="badge-mode" class="pill pill-alert w-full lg:w-auto justify-center"><i data-lucide="alert-circle" class="w-4 h-4"></i> Demo</span>
+        <button onclick="openFullAnalysis()" class="pill w-full lg:w-auto justify-center"><i data-lucide="pie-chart" class="w-4 h-4"></i> Analysis</button>
+        <button onclick="openHistory()" class="pill w-full lg:w-auto justify-center"><i data-lucide="bell" class="w-4 h-4"></i> Alerts</button>
+        <button onclick="openCustomization()" class="pill w-full lg:w-auto justify-center"><i data-lucide="settings-2" class="w-4 h-4"></i> Settings</button>
+      </div>
+    </header>
+
+    <main class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+      <!-- Left: Telemetry -->
+      <section class="space-y-6 lg:col-span-8">
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <article onclick="openChart('Temperature', '°C', '#22d3ee')" class="glass glass-clickable p-5 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="thermometer" class="w-24 h-24"></i></div>
+            <div class="flex justify-between items-center mb-2"><h3 class="text-sm text-slate-300">Temperature</h3><i data-lucide="line-chart" class="w-4 h-4 text-cyan-500 opacity-50 group-hover:opacity-100"></i></div>
+            <p class="text-4xl font-bold"><span id="val-temp" class="neon-text">--</span><span class="text-lg text-slate-400 ml-1">°C</span></p>
+          </article>
+          <article onclick="openChart('pH Level', '', '#a855f7')" class="glass glass-clickable p-5 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="test-tube-diagonal" class="w-24 h-24"></i></div>
+            <div class="flex justify-between items-center mb-2"><h3 class="text-sm text-slate-300">pH Value</h3><i data-lucide="line-chart" class="w-4 h-4 text-purple-500 opacity-50 group-hover:opacity-100"></i></div>
+            <p class="text-4xl font-bold"><span id="val-ph" class="text-purple-400">--</span></p>
+          </article>
+          <article onclick="openChart('TDS', 'ppm', '#eab308')" class="glass glass-clickable p-5 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="droplets" class="w-24 h-24"></i></div>
+            <div class="flex justify-between items-center mb-2"><h3 class="text-sm text-slate-300">TDS</h3><i data-lucide="line-chart" class="w-4 h-4 text-yellow-500 opacity-50 group-hover:opacity-100"></i></div>
+            <p class="text-4xl font-bold"><span id="val-tds">--</span><span class="text-lg text-slate-400 ml-1">ppm</span></p>
+          </article>
+          <article onclick="openChart('Turbidity', 'NTU', '#f43f5e')" class="glass glass-clickable p-5 relative overflow-hidden group">
+            <div class="absolute -right-4 -top-4 opacity-10 group-hover:opacity-20 transition"><i data-lucide="waves" class="w-24 h-24"></i></div>
+            <div class="flex justify-between items-center mb-2"><h3 class="text-sm text-slate-300">Turbidity</h3><i data-lucide="line-chart" class="w-4 h-4 text-rose-500 opacity-50 group-hover:opacity-100"></i></div>
+            <p class="text-4xl font-bold"><span id="val-turb">--</span><span class="text-lg text-slate-400 ml-1">NTU</span></p>
+          </article>
+        </div>
+        <article class="glass p-6 bg-gradient-to-br from-slate-800/40 to-cyan-900/20 border-cyan-500/20">
+          <div class="flex items-center gap-3"><i data-lucide="calendar-clock" class="w-6 h-6 text-cyan-400"></i><h2 class="text-xl font-bold text-white">Predicted Days to Maintenance</h2></div>
+          <p class="mt-4 text-6xl font-black drop-shadow-lg"><span id="val-days" class="neon-text">--</span> <span class="text-xl font-medium text-slate-400">days left</span></p>
+        </article>
+        <article class="glass p-5">
+          <h2 class="mb-4 flex items-center gap-2 text-lg font-bold"><i data-lucide="alert-triangle" class="w-5 h-5 text-amber-400"></i> Active Alerts</h2>
+          <div id="alertsContainer" class="space-y-3"><div class="rounded-xl border border-slate-700 bg-slate-800/50 p-4 text-slate-400 text-center">Please connect database...</div></div>
+        </article>
+      </section>
+
+      <!-- Right: Power & Controls -->
+      <aside class="space-y-6 lg:col-span-4">
+        <article class="glass p-5">
+          <h2 class="mb-4 flex items-center gap-2 text-lg font-bold"><i data-lucide="battery-charging" class="w-5 h-5 text-emerald-400"></i> Power Station</h2>
+          <div class="space-y-4">
+            <div class="flex justify-between items-end border-b border-slate-700/50 pb-3">
+              <div><p class="text-xs text-slate-400">Voltage</p><p class="text-2xl font-bold"><span id="val-voltage">--</span><span class="text-sm text-slate-500">V</span></p></div>
+              <div class="text-right"><p class="text-xs text-slate-400">Charging</p><p id="val-charging" class="text-lg font-semibold text-slate-300">--</p></div>
+            </div>
+            <div>
+              <div class="flex justify-between text-xs text-slate-400 mb-1"><span>Battery Level</span><span id="val-battery">0%</span></div>
+              <div class="h-3 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700">
+                <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-cyan-500 w-0 transition-all duration-500"></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="glass p-5">
+          <h2 class="mb-4 flex items-center gap-2 text-lg font-bold"><i data-lucide="cpu" class="w-5 h-5 text-cyan-400"></i> Command Center</h2>
+          
+          <!-- INDEPENDENT LIGHT CONTROL -->
+          <div class="flex justify-between items-center p-4 rounded-xl border border-slate-700 bg-gradient-to-r from-slate-800/60 to-slate-800/30 mb-5 shadow-lg">
+            <div><p class="font-bold text-sm text-cyan-200">Tank Lights (ARGB)</p><p id="st-light" class="text-xs text-slate-400">OFF (Auto Mode)</p></div>
+            <div class="flex items-center gap-2">
+              <!-- Using oninput to update color without waiting for blur, helping to keep it in sync -->
+              <input type="color" id="inp-light-color" class="w-8 h-8 rounded cursor-pointer bg-slate-800 border border-slate-600 p-0.5" value="#ffffff" title="Pick Color" oninput="updateTempLightColor(this.value)">
+              <button onclick="applyLightColor()" class="text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-white px-2 py-1.5 rounded transition">Apply</button>
+              <label class="cursor-pointer ml-1"><input id="toggle-light" onchange="toggleDevice('light', this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label>
+            </div>
+          </div>
+
+          <!-- MANUAL OVERRIDE SWITCH -->
+          <div class="flex items-center justify-between p-4 rounded-xl bg-slate-800/40 border border-slate-700 mb-4 mt-6">
+            <div><p id="modeLabel" class="font-bold text-white">Auto Mode</p><p id="modeSub" class="text-xs text-slate-400">Sensors managing system</p></div>
+            <label class="cursor-pointer"><input id="toggle-mode" onchange="toggleManualMode(this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label>
+          </div>
+          
+          <!-- OTHER CONTROLS (Disabled in Auto Mode) -->
+          <div id="manualControls" class="space-y-3 opacity-50 pointer-events-none transition-opacity duration-300">
+            <div class="flex justify-between items-center p-3 rounded-lg bg-slate-800/30"><div><p class="font-semibold text-sm">Cooling Fan</p><p id="st-fan" class="text-xs text-slate-400">OFF</p></div><label class="cursor-pointer"><input id="toggle-fan" onchange="toggleDevice('fan', this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label></div>
+            <div class="flex justify-between items-center p-3 rounded-lg bg-slate-800/30"><div><p class="font-semibold text-sm">Water Pump</p><p id="st-pump" class="text-xs text-slate-400">OFF</p></div><label class="cursor-pointer"><input id="toggle-pump" onchange="toggleDevice('pump', this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label></div>
+            <div class="flex justify-between items-center p-3 rounded-lg bg-slate-800/30"><div><p class="font-semibold text-sm">Heater</p><p id="st-heater" class="text-xs text-slate-400">OFF</p></div><label class="cursor-pointer"><input id="toggle-heater" onchange="toggleDevice('heater', this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label></div>
+            <div class="flex justify-between items-center p-3 rounded-lg bg-slate-800/30"><div><p class="font-semibold text-sm">Buzzer</p><p id="st-buzzer" class="text-xs text-slate-400">OFF</p></div><label class="cursor-pointer"><input id="toggle-buzzer" onchange="toggleDevice('buzzer', this.checked)" type="checkbox" class="sr-only" /><span class="toggle block"></span></label></div>
+          </div>
+
+          <!-- Feed Buttons Group -->
+          <div class="flex gap-2 mt-5">
+              <button onclick="feedFishNow()" class="btn-primary flex-1 rounded-xl py-4 font-bold flex flex-col justify-center items-center gap-1">
+                <div class="flex items-center gap-2"><i data-lucide="fish" class="w-5 h-5"></i> Feed Now</div>
+                <span id="feed-count-txt" class="text-xs font-normal opacity-80">Today's Feeds: 0</span>
+              </button>
+              <button onclick="openFeedScheduler()" class="bg-slate-800 border border-slate-600 hover:border-emerald-500 rounded-xl px-4 flex flex-col items-center justify-center transition group" title="Set Schedules">
+                <i data-lucide="clock" class="w-5 h-5 text-emerald-400 group-hover:scale-110 transition"></i>
+                <span class="text-[10px] mt-1 text-slate-400">Alarms</span>
+              </button>
+          </div>
+        </article>
+      </aside>
+    </main>
+
+    <footer class="mt-8 border-t border-slate-700/50 pt-6 pb-6 text-center sm:text-left text-sm text-slate-400 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p>Designed & Developed by <strong class="text-slate-200">Sachin Rathnayaka (WRSCN)</strong></p>
+      <div class="flex gap-4"><a href="https://github.com/SachinRathnayaka" target="_blank" class="hover:text-cyan-400 flex items-center gap-1"><i data-lucide="github" class="w-4 h-4"></i> GitHub</a><span>License: MIT</span></div>
+    </footer>
+  </div>
+
+  <!-- CUSTOMIZATION MODAL -->
+  <div id="customModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass w-full max-w-4xl p-6 relative max-h-[90vh] overflow-y-auto">
+      <button onclick="closeCustomization()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+      <h2 class="text-2xl font-bold mb-6 text-white border-b border-slate-700 pb-3"><i data-lucide="palette" class="inline w-6 h-6 mr-2 text-cyan-400"></i>Theme & Settings</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div>
+          <h3 class="text-sm font-semibold text-slate-300 mb-3">Select System Theme</h3>
+          <div class="grid grid-cols-2 gap-3 mb-4">
+            <button class="theme-btn p-3 rounded-lg border border-slate-600 bg-slate-800 text-left transition" data-theme="ocean"><div class="w-full h-8 rounded bg-gradient-to-r from-cyan-600 to-blue-900 mb-2 pointer-events-none"></div>Ocean</button>
+            <button class="theme-btn p-3 rounded-lg border border-slate-600 bg-slate-800 text-left transition" data-theme="cyber"><div class="w-full h-8 rounded bg-gradient-to-r from-fuchsia-600 to-purple-900 mb-2 pointer-events-none"></div>Cyber</button>
+            <button class="theme-btn p-3 rounded-lg border border-slate-600 bg-slate-800 text-left transition" data-theme="emerald"><div class="w-full h-8 rounded bg-gradient-to-r from-emerald-500 to-teal-900 mb-2 pointer-events-none"></div>Emerald</button>
+            <button class="theme-btn p-3 rounded-lg border border-slate-600 bg-slate-800 text-left transition" data-theme="sunset"><div class="w-full h-8 rounded bg-gradient-to-r from-orange-500 to-red-900 mb-2 pointer-events-none"></div>Sunset</button>
+          </div>
+          <div class="flex items-center gap-3">
+            <label class="text-sm text-slate-300">Custom Color:</label>
+            <input type="color" id="custom-theme-color" onchange="applyCustomThemeVars(this.value)" class="w-12 h-8 rounded cursor-pointer bg-slate-800 border border-slate-600 p-0.5" />
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 mb-2">Dashboard Options</h3>
+            <select id="sel-text-size" onchange="changeTextSize(this.value)" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2.5 text-white outline-none mb-3 custom-select">
+              <option value="small">Text: Small</option>
+              <option value="medium" selected>Text: Medium</option>
+              <option value="large">Text: Large</option>
+            </select>
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 mb-2">Aquarium Background (URL/Upload)</h3>
+            <input type="url" id="inp-tank-img" placeholder="Paste image URL (https://...)" class="w-full bg-slate-800 border border-slate-600 rounded-lg p-2.5 text-white outline-none mb-2"/>
+            <input type="file" id="file-tank-img" accept="image/*" class="w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-cyan-500/20 file:text-cyan-300 hover:file:bg-cyan-500/30" />
+          </div>
+          <div>
+            <h3 class="text-sm font-semibold text-slate-300 mb-2">ESP32 Time Synchronization</h3>
+            <p class="text-xs text-slate-400 mb-2">Sync your browser's current date and time to the ESP32 RTC module via Firebase.</p>
+            <button onclick="syncESP32Time()" class="w-full rounded-xl border border-cyan-500/30 bg-slate-800 py-2.5 font-semibold text-cyan-300 hover:bg-slate-700 transition flex items-center justify-center gap-2">
+              <i data-lucide="clock" class="w-4 h-4"></i> Sync Time Now
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="mt-8 pt-4 border-t border-slate-700 flex justify-between">
+        <button onclick="resetDefaults()" class="text-rose-400 hover:text-rose-300 text-sm font-semibold"><i data-lucide="rotate-ccw" class="inline w-4 h-4 mr-1"></i> Reset Everything to Default</button>
+        <button onclick="saveCustomization()" class="btn-primary px-6 py-2 rounded-lg font-bold">Apply & Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART MODAL -->
+  <div id="chartModal" class="fixed inset-0 z-[90] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass w-full max-w-4xl p-6 relative">
+      <button onclick="closeChart()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+      <h2 id="chartTitle" class="text-2xl font-bold mb-1 text-white">Analysis</h2>
+      <select id="sel-chart-type" onchange="updateFullChart()" class="hidden mb-4 bg-slate-800 border border-slate-600 rounded-lg p-2 text-white outline-none custom-select">
+        <option value="Temperature">Temperature (°C)</option>
+        <option value="pH Level">pH Value</option>
+        <option value="TDS">TDS (ppm)</option>
+        <option value="Turbidity">Turbidity (NTU)</option>
+        <option value="Feeds">Fish Feeds (Count)</option>
+      </select>
+      <p id="chartSub" class="text-sm text-slate-400 mb-4">Historical data for the last 21 days.</p>
+      <div class="chart-container bg-slate-900/50 rounded-xl p-4 border border-slate-700"><canvas id="analysisChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- HISTORY MODAL -->
+  <div id="historyModal" class="fixed inset-0 z-[80] hidden items-center justify-center p-4 modal-backdrop">
+    <div class="glass w-full max-w-md p-6 relative max-h-[80vh] flex flex-col">
+      <button onclick="closeHistory()" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i data-lucide="x" class="w-6 h-6"></i></button>
+      <h2 class="text-xl font-bold mb-4 text-white"><i data-lucide="bell-ring" class="inline w-5 h-5 mr-2 text-cyan-400"></i>Alerts & History</h2>
+      <div id="historyList" class="overflow-y-auto space-y-2 pr-2 flex-1"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- 1. CORE UTILITIES ---
+    const el = id => document.getElementById(id);
+    const safeHTML = str => String(str).replace(/[&<>'"]/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[m]));
+    const safeURL = url => { try { const u = new URL(url); return (u.protocol==='http:'||u.protocol==='https:'||u.protocol==='data:') ? url : ''; } catch { return ''; } };
+    const safeSet = (key, val) => { try { localStorage.setItem(key, val); } catch(e) {} };
+    const safeGet = key => { try { return localStorage.getItem(key); } catch(e) { return null; } };
+    const safeRemove = key => { try { localStorage.removeItem(key); } catch(e) {} };
+    function safeIcons() { try { if(typeof lucide !== 'undefined') lucide.createIcons(); } catch(e){} }
+
+    // --- 2. GLOBALS ---
+    const DEVICE_PATH = "devices/aquaSense";
+    let firebaseDb = null;
+    let appMode = "setup";
+    let isListening = false;
+    let recognition = null;
+    let chartInstance = null;
+    let notificationHistory = [];
+    let hasSpokenCritical = false;
+    let demoEngineInterval = null;
+    let activeCritical = false; 
+    
+    // Fish Feed Counters & UNLIMITED Scheduler
+    let feedCount = 0;
+    let lastFeedDate = safeGet('aquaFeedDate') || new Date().toDateString();
+    let feedSchedules = JSON.parse(safeGet('aquaFeedSchedules') || '[]');
+    let lastAutoFeedRuns = JSON.parse(safeGet('aquaAutoFeedRuns') || '{}'); 
+    let alertStates = { tempH: false, tempL: false, phH: false, phL: false, tds: false, turb: false, filter: false, water: false };
+
+    // Independent Light State variables
+    let manualMode = false, fan=false, pump=true, heater=false, buzzer=false;
+    let light=false, lightColor="#ffffff";
+    let tempLightColor = "#ffffff"; // Used to track color while picking before apply
+
+    // --- 3. CLOCK, TIME SYNC & SCHEDULER LOGIC ---
+    function initTimePicker() {
+        const hSel = el('new-feed-h'); const mSel = el('new-feed-m');
+        if(!hSel || !mSel) return;
+        hSel.innerHTML = ""; mSel.innerHTML = "";
+        
+        // 12-hour format strings for the dropdown
+        for(let i=0; i<24; i++) { 
+            let display = i === 0 ? "12 AM" : i < 12 ? `${String(i).padStart(2,'0')} AM` : i === 12 ? "12 PM" : `${String(i-12).padStart(2,'0')} PM`;
+            hSel.innerHTML += `<option value="${i}">${display}</option>`; 
+        }
+        for(let i=0; i<60; i++) { mSel.innerHTML += `<option value="${i}">${String(i).padStart(2,'0')}</option>`; }
+        
+        hSel.value = "8"; // Default 8 AM
+        mSel.value = "0"; 
+
+        document.querySelectorAll('.day-btn').forEach(b => {
+            b.addEventListener('click', (e) => {
+                e.currentTarget.classList.toggle('active');
+                if(el('new-feed-date')) el('new-feed-date').value = ""; 
+            });
+        });
+
+        if(el('new-feed-date')) {
+            el('new-feed-date').addEventListener('change', () => {
+                document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active')); 
+            });
+        }
+    }
+    
+    function updateModalClockPreview() {
+        if(el('feedScheduleModal').classList.contains('hidden') || el('addScheduleForm').classList.contains('hidden')) return;
+        let h = parseInt(el('new-feed-h').value);
+        const m = el('new-feed-m').value;
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12; h = h ? h : 12;
+        el('modalLiveTime').innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')} ${ampm}`;
+    }
+
+    function updateClock() {
+      const clock = el('liveClock');
+      const modalDate = el('modalLiveDate');
+      const now = new Date();
+      if(clock) clock.innerText = now.toLocaleString('en-GB'); 
+      if(modalDate) modalDate.innerText = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      
+      const currentHM = String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0');
+      const todayStr = now.toDateString();
+      const currentDay = now.getDay();
+      const currentDateStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0');
+
+      let runsUpdated = false;
+
+      feedSchedules.forEach(sc => {
+         if(!sc.enabled) return;
+         
+         let isCorrectDay = false;
+         if(sc.date) { isCorrectDay = (sc.date === currentDateStr); } 
+         else if (sc.days && sc.days.length > 0) { isCorrectDay = sc.days.includes(currentDay); } 
+         else { isCorrectDay = true; }
+
+         if(isCorrectDay && sc.time24 === currentHM && lastAutoFeedRuns[sc.id] !== todayStr && now.getSeconds() === 0) {
+             lastAutoFeedRuns[sc.id] = todayStr;
+             runsUpdated = true;
+             triggerAutoFeedSequence(sc.portions);
+         }
+      });
+
+      if(runsUpdated) safeSet('aquaAutoFeedRuns', JSON.stringify(lastAutoFeedRuns));
+    }
+    setInterval(updateClock, 1000);
+
+    function syncESP32Time() {
+      const now = new Date();
+      const timeStr = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,'0') + "-" + String(now.getDate()).padStart(2,'0') + "T" + String(now.getHours()).padStart(2,'0') + ":" + String(now.getMinutes()).padStart(2,'0') + ":" + String(now.getSeconds()).padStart(2,'0');
+      if(appMode === 'firebase' && firebaseDb) {
+        firebaseDb.ref(`${DEVICE_PATH}/commands/rtc_sync`).set(timeStr)
+          .then(() => showToast(`Time synced successfully to ESP32: ${timeStr}`, "success"))
+          .catch(e => showToast("Failed to sync time to Firebase.", "error"));
+      } else { showToast(`(Demo) Time sync requested: ${timeStr}`, "success"); }
+    }
+
+    // --- 4. TOASTS & HISTORY ---
+    function showToast(msg, type="info") {
+      const c = el("toastContainer"); if(!c) return;
+      const t = document.createElement("div");
+      t.className = `toast border-l-4 ${type==='error'?'border-rose-500':type==='warning'?'border-amber-500':'border-cyan-500'} pointer-events-auto`;
+      t.innerHTML = `<p class="font-medium">${safeHTML(msg)}</p><p class="text-xs text-slate-400">${new Date().toLocaleTimeString()}</p>`;
+      c.prepend(t); addHistory(msg, type);
+      setTimeout(() => { t.style.opacity=0; setTimeout(()=>t.remove(), 300); }, 4500);
+    }
+    function addHistory(msg, type) {
+      notificationHistory.unshift({ msg, type, time: new Date().toLocaleString() });
+      if(notificationHistory.length > 50) notificationHistory.pop();
+      if(el('historyModal') && !el('historyModal').classList.contains('hidden')) openHistory();
+    }
+
+    // --- 5. PARALLAX & FISH ANIMATIONS ---
+    window.addEventListener('scroll', () => {
+      try {
+        const limitedScroll = Math.min(window.scrollY, 500); 
+        if(el('seaBottom')) el('seaBottom').style.transform = `translateY(${limitedScroll * -0.15}px)`;
+        if(el('cinematicBg')) el('cinematicBg').style.transform = `translateY(${limitedScroll * 0.1}px) scale(1.05)`;
+      } catch(e){}
+    });
+
+    function initAquaticLife() {
+      const layer = el('fishLayer'); if(!layer) return;
+      layer.innerHTML = ""; 
+      const types = ['fish-type-1', 'fish-type-1', 'fish-type-2', 'jellyfish'];
+      let fishes = [];
+      for(let i=0; i<12; i++) {
+        const type = types[Math.floor(Math.random() * types.length)];
+        const f = document.createElement('div'); f.className = type;
+        f.innerHTML = type.includes('fish') ? `<div class="tail"></div><div class="body"></div>` : `<div class="dome"></div><div class="tentacles"></div>`;
+        layer.appendChild(f);
+        fishes.push({ el: f, type, x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight * 0.7, dir: Math.random() > 0.5 ? 1 : -1, speed: (Math.random() * 0.5) + 0.2, scale: (Math.random() * 0.5) + 0.5, phase: Math.random() * 10 });
+      }
+      function animate() {
+        fishes.forEach(f => {
+          if(f.type.includes('fish')) {
+            f.x += f.speed * f.dir; f.y += Math.sin(Date.now()*0.002 + f.phase) * 0.5;
+            if(f.x > window.innerWidth + 100) { f.x = -100; f.y = Math.random()*window.innerHeight*0.8; }
+            if(f.x < -100) { f.x = window.innerWidth + 100; f.y = Math.random()*window.innerHeight*0.8; }
+            f.el.style.transform = `translate(${f.x}px, ${f.y}px) scaleX(${f.dir}) scale(${f.scale})`;
+          } else {
+            f.y -= f.speed * 0.5;
+            if(f.y < -100) { f.y = window.innerHeight + 100; f.x = Math.random()*window.innerWidth; }
+            f.el.style.transform = `translate(${f.x}px, ${f.y}px) scale(${f.scale})`;
+          }
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // --- 6. CHARTS ---
+    function renderChart(title, unit, color) {
+      try {
+        if(typeof Chart === 'undefined') return;
+        const canvas = el('analysisChart'); if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        if(chartInstance) chartInstance.destroy();
+        
+        const labels = Array.from({length: 21}, (_, i) => {
+            const d = new Date(); d.setDate(d.getDate() - (20 - i));
+            return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+        });
+
+        let baseVal = title === 'Temperature' ? 26 : title === 'pH Level' ? 7.0 : title === 'TDS' ? 800 : title === 'Feeds' ? 2 : 12;
+        const data = labels.map((_, i) => {
+           if(i === 20) {
+               if(title === 'Temperature') return demoSensors.temp || 26;
+               if(title === 'pH Level') return demoSensors.ph || 7.0;
+               if(title === 'TDS') return demoSensors.tds || 600;
+               if(title === 'Turbidity') return demoSensors.turb || 5;
+               if(title === 'Feeds') return feedCount;
+           }
+           let val = baseVal + (Math.random()*4 - 2);
+           if(title === 'Feeds') val = Math.floor(Math.random() * 5); 
+           return val;
+        });
+
+        chartInstance = new Chart(ctx, {
+          type: title === 'Feeds' ? 'bar' : 'line',
+          data: { labels, datasets: [{ label: `${title} ${unit ? '('+unit+')' : ''}`, data, borderColor: color, backgroundColor: color+'55', fill: true, tension: 0.4, borderRadius: title==='Feeds'?4:0 }] },
+          options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#cbd5e1' }, onClick: (e) => e.stopPropagation() } }, scales: { x: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } }, y: { ticks: { color: '#94a3b8' }, grid: { color: '#334155' } } } }
+        });
+      } catch(e) {}
+    }
+    
+    function updateLiveChartValue() {
+        if(!chartInstance || !el('chartModal') || el('chartModal').classList.contains('hidden')) return;
+        const type = el('sel-chart-type').value || el('chartTitle').innerText.split(' ')[0];
+        const ds = chartInstance.data.datasets[0].data;
+        if(type === 'Temperature') ds[20] = demoSensors.temp; else if(type === 'pH') ds[20] = demoSensors.ph; else if(type === 'TDS') ds[20] = demoSensors.tds; else if(type === 'Turbidity') ds[20] = demoSensors.turb; else if(type === 'Feeds') ds[20] = feedCount;
+        chartInstance.update();
+    }
+
+    function openChart(title, unit, color) {
+      if(el('sel-chart-type')) el('sel-chart-type').classList.add('hidden');
+      if(el('chartTitle')) el('chartTitle').innerText = `${title} (Last 21 Days)`;
+      if(el('chartModal')) { el('chartModal').classList.remove('hidden'); el('chartModal').classList.add('flex'); }
+      renderChart(title, unit, color);
+    }
+    function openFullAnalysis() {
+      if(el('sel-chart-type')) { el('sel-chart-type').classList.remove('hidden'); el('sel-chart-type').value = 'Temperature'; }
+      if(el('chartTitle')) el('chartTitle').innerText = `Full System Analysis`;
+      if(el('chartModal')) { el('chartModal').classList.remove('hidden'); el('chartModal').classList.add('flex'); }
+      renderChart('Temperature', '°C', '#22d3ee');
+    }
+    function updateFullChart() {
+      const type = el('sel-chart-type') ? el('sel-chart-type').value : 'Temperature';
+      const map = { 'Temperature': { unit: '°C', color: '#22d3ee' }, 'pH Level': { unit: '', color: '#a855f7' }, 'TDS': { unit: 'ppm', color: '#eab308' }, 'Turbidity': { unit: 'NTU', color: '#f43f5e' }, 'Feeds': { unit: 'Count', color: '#10b981' } };
+      renderChart(type, map[type].unit, map[type].color);
+    }
+    function closeChart() { if(el('chartModal')) { el('chartModal').classList.add('hidden'); el('chartModal').classList.remove('flex'); } }
+
+    // --- 7. HISTORY & HELP MODALS ---
+    function openHistory() {
+      const list = el('historyList');
+      if(list) list.innerHTML = notificationHistory.length === 0 ? '<p class="text-slate-500 text-sm">No notifications yet.</p>' : notificationHistory.map(h => `<div class="p-3 bg-slate-800/50 rounded border border-slate-700 mb-2"><p class="text-sm text-white">${safeHTML(h.msg)}</p><p class="text-xs text-slate-500 mt-1">${h.time}</p></div>`).join('');
+      if(el('historyModal')) { el('historyModal').classList.remove('hidden'); el('historyModal').classList.add('flex'); }
+    }
+    function closeHistory() { if(el('historyModal')) { el('historyModal').classList.add('hidden'); el('historyModal').classList.remove('flex'); } }
+    
+    function openVoiceHelp() { if(el('voiceHelpModal')) { el('voiceHelpModal').classList.remove('hidden'); el('voiceHelpModal').classList.add('flex'); } }
+    function closeVoiceHelp() { if(el('voiceHelpModal')) { el('voiceHelpModal').classList.add('hidden'); el('voiceHelpModal').classList.remove('flex'); } }
+
+    // --- 8. UNLIMITED FEED SCHEDULER MODAL ---
+    function formatTime12h(time24) {
+      let [h, m] = time24.split(':'); h = parseInt(h);
+      let ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12; h = h ? h : 12; 
+      return `${String(h).padStart(2,'0')}:${m} <span class="text-sm font-semibold text-slate-400">${ampm}</span>`;
+    }
+
+    function renderSchedules() {
+      const list = el('scheduleList');
+      if(feedSchedules.length === 0) {
+        list.innerHTML = `<div class="text-center text-slate-400 py-6 text-sm">No schedules set. Click below to add.</div>`;
+        return;
+      }
+      list.innerHTML = feedSchedules.map((sc, i) => {
+        const dayNames = ['S','M','T','W','T','F','S'];
+        let repText = "";
+        if(sc.date) repText = `Date: ${sc.date}`;
+        else if (sc.days && sc.days.length > 0) repText = `Days: ` + sc.days.map(d=>dayNames[d]).join(', ');
+        else repText = "Everyday";
+
+        return `
+        <div class="flex items-center justify-between bg-slate-800/40 border border-slate-700 p-4 rounded-xl">
+          <div>
+            <p class="text-2xl font-bold text-white tracking-wider">${formatTime12h(sc.time24)}</p>
+            <p class="text-xs text-cyan-400 mt-1 font-semibold">${sc.portions} Portion(s) | <span class="text-slate-400">${repText}</span></p>
+          </div>
+          <div class="flex items-center gap-4">
+            <label class="cursor-pointer">
+              <input type="checkbox" onchange="toggleSchedule(${i}, this.checked)" ${sc.enabled ? 'checked' : ''} class="sr-only toggle-sch" />
+              <span class="toggle block" style="width: 44px; height: 24px;"></span>
+            </label>
+            <button onclick="deleteSchedule(${i})" class="text-rose-400 hover:text-rose-300 transition" title="Delete"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+          </div>
+        </div>
+      `}).join('');
+      safeIcons();
+    }
+
+    function toggleSchedule(index, isEnabled) {
+        feedSchedules[index].enabled = isEnabled;
+        safeSet('aquaFeedSchedules', JSON.stringify(feedSchedules));
+        showToast(isEnabled ? "Schedule enabled." : "Schedule disabled.", "info");
+    }
+
+    function deleteSchedule(index) {
+        feedSchedules.splice(index, 1);
+        safeSet('aquaFeedSchedules', JSON.stringify(feedSchedules));
+        renderSchedules(); showToast("Schedule deleted.", "success");
+    }
+
+    function openFeedScheduler() {
+      el('feedScheduleModal').classList.remove('hidden'); el('feedScheduleModal').classList.add('flex');
+      el('addScheduleForm').classList.add('hidden'); el('scheduleListWrapper').classList.remove('hidden'); el('btnAddNewSchedule').classList.remove('hidden');
+      renderSchedules();
+    }
+    function closeFeedScheduler() { el('feedScheduleModal').classList.add('hidden'); el('feedScheduleModal').classList.remove('flex'); }
+    
+    function setQuickTime(h, m) {
+        el('new-feed-h').value = h;
+        el('new-feed-m').value = m;
+        updateModalClockPreview();
+    }
+
+    function showAddSchedule() {
+        el('scheduleListWrapper').classList.add('hidden'); el('btnAddNewSchedule').classList.add('hidden'); el('addScheduleForm').classList.remove('hidden');
+        updateModalClockPreview();
+    }
+    function cancelAddSchedule() {
+        el('addScheduleForm').classList.add('hidden'); el('scheduleListWrapper').classList.remove('hidden'); el('btnAddNewSchedule').classList.remove('hidden');
+    }
+
+    function saveNewSchedule() {
+      let h = parseInt(el('new-feed-h').value);
+      const m = el('new-feed-m').value;
+      const qty = parseInt(el('new-feed-qty').value);
+      const specificDate = el('new-feed-date').value;
+      
+      let activeDays = [];
+      document.querySelectorAll('.day-btn.active').forEach(b => activeDays.push(parseInt(b.getAttribute('data-day'))));
+
+      const time24 = String(h).padStart(2,'0') + ":" + String(m).padStart(2,'0');
+      
+      feedSchedules.push({ id: Date.now(), time24: time24, portions: qty, enabled: true, days: activeDays, date: specificDate });
+      safeSet('aquaFeedSchedules', JSON.stringify(feedSchedules));
+      
+      cancelAddSchedule(); renderSchedules(); showToast("New schedule saved!", "success");
+    }
+
+    // --- 9. THEMES & SETTINGS ---
+    const THEMES = { ocean: { h: 199, s: 89, l: 48, bgB: '#0f172a' }, cyber: { h: 280, s: 90, l: 60, bgB: '#090014' }, emerald: { h: 150, s: 80, l: 45, bgB: '#064e3b' }, sunset: { h: 20, s: 90, l: 55, bgB: '#431407' } };
+    let tempTheme = null; let tempText = null;
+    
+    function applyThemeVars(name) {
+      const t = THEMES[name]; if(!t) return;
+      document.documentElement.style.setProperty('--primary-h', t.h); document.documentElement.style.setProperty('--primary-s', t.s+'%'); document.documentElement.style.setProperty('--primary-l', t.l+'%');
+      document.documentElement.style.setProperty('--bg-a', '#020617'); document.documentElement.style.setProperty('--bg-b', t.bgB);
+    }
+    function applyCustomThemeVars(hex) {
+      const c = hex.replace("#", "").trim();
+      const r = parseInt(c.substr(0,2),16)/255, g = parseInt(c.substr(2,2),16)/255, b = parseInt(c.substr(4,2),16)/255;
+      const max = Math.max(r,g,b), min = Math.min(r,g,b); let h=0, s=0, l=(max+min)/2;
+      if(max!==min){ const d = max-min; s = l>.5 ? d/(2-max-min) : d/(max+min); switch(max){ case r: h=(g-b)/d+(g<b?6:0); break; case g: h=(b-r)/d+2; break; case b: h=(r-g)/d+4; break; } h/=6; }
+      document.documentElement.style.setProperty('--primary-h', Math.round(h*360)); document.documentElement.style.setProperty('--primary-s', Math.round(s*100)+'%'); document.documentElement.style.setProperty('--primary-l', Math.round(l*100)+'%');
+      document.documentElement.style.setProperty('--bg-a', '#020617'); document.documentElement.style.setProperty('--bg-b', hex);
+    }
+
+    document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active-theme')); e.currentTarget.classList.add('active-theme');
+            tempTheme = e.currentTarget.getAttribute('data-theme'); applyThemeVars(tempTheme);
+        });
+    });
+
+    function changeTextSize(size) { tempText = size; const scale = size === 'small' ? 0.9 : size === 'large' ? 1.15 : 1; document.documentElement.style.setProperty('--text-scale', scale); }
+    function applyImage(url) {
+      const valid = safeURL(url); const bg = el('cinematicBg');
+      if(bg) { if(valid) { bg.style.backgroundImage = `url('${valid}')`; bg.style.opacity = "0.6"; } else { bg.style.backgroundImage = "none"; bg.style.opacity = "0.25"; } }
+      safeSet('aquaImg', valid);
+    }
+    
+    function openCustomization() { 
+      const currTheme = safeGet('aquaTheme') || 'ocean';
+      document.querySelectorAll('.theme-btn').forEach(b => { b.classList.remove('active-theme'); if(b.getAttribute('data-theme') === currTheme) b.classList.add('active-theme'); });
+      if(currTheme === 'custom') { const cCol = safeGet('aquaCustomColor'); if(cCol && el('custom-theme-color')) el('custom-theme-color').value = cCol; }
+      tempTheme = currTheme === 'custom' ? 'custom:'+safeGet('aquaCustomColor') : currTheme; tempText = safeGet('aquaText') || 'medium';
+      if(el('customModal')) { el('customModal').classList.remove('hidden'); el('customModal').classList.add('flex'); } 
+    }
+    function closeCustomization() { 
+      const sTheme = safeGet('aquaTheme'); 
+      if(sTheme === 'custom') { const h = safeGet('aquaCustomColor'); if(h) applyCustomThemeVars(h); } else if(sTheme) applyThemeVars(sTheme); else applyThemeVars('ocean');
+      const sText = safeGet('aquaText'); if(sText) changeTextSize(sText); else changeTextSize('medium');
+      if(el('customModal')) { el('customModal').classList.add('hidden'); el('customModal').classList.remove('flex'); } 
+    }
+    function saveCustomization() {
+      if(tempTheme) { if(tempTheme.startsWith('custom:')) { safeSet('aquaTheme', 'custom'); safeSet('aquaCustomColor', tempTheme.split(':')[1]); } else { safeSet('aquaTheme', tempTheme); } }
+      if(tempText) safeSet('aquaText', tempText);
+      if(el('inp-tank-img')) applyImage(el('inp-tank-img').value);
+      if(el('customModal')) { el('customModal').classList.add('hidden'); el('customModal').classList.remove('flex'); }
+      showToast("Settings saved successfully!", "success");
+    }
+    function resetDefaults() { localStorage.clear(); showToast("System Resetting...", "info"); setTimeout(() => location.reload(), 1000); }
+    
+    if(el('file-tank-img')) {
+      el('file-tank-img').addEventListener('change', (e) => {
+        const file = e.target.files[0]; if(file) { const r = new FileReader(); r.onload = () => { if(el('inp-tank-img')) el('inp-tank-img').value = r.result; }; r.readAsDataURL(file); }
+      });
+    }
+
+    // --- 10. CORE STATE LOGIC ---
+    let demoSensors = { temp: 26, ph: 7.2, tds: 600, turb: 5, days: 12, volt: 12.2, bat: 80, charge: false };
+    let demoStatus = { filter_change_required: false };
+    
+    function speakAlert(msg) {
+      if(!('speechSynthesis' in window) || hasSpokenCritical) return;
+      window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(msg); u.lang = 'en-US'; u.rate = 0.95; window.speechSynthesis.speak(u); hasSpokenCritical = true;
+    }
+    
+    function speakVoiceReply(msg) {
+        if(!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(msg); u.lang = 'en-US'; u.rate = 0.95; window.speechSynthesis.speak(u);
+    }
+
+    function updateUI(sensors, status = demoStatus) {
+      try {
+        if(el('val-temp')) el('val-temp').innerText = sensors.temp.toFixed(1); 
+        if(el('val-ph')) el('val-ph').innerText = sensors.ph.toFixed(2);
+        if(el('val-tds')) el('val-tds').innerText = sensors.tds.toFixed(0); 
+        if(el('val-turb')) el('val-turb').innerText = sensors.turb.toFixed(1);
+        if(el('val-days')) el('val-days').innerText = sensors.days.toFixed(0); 
+        if(el('val-voltage')) el('val-voltage').innerText = sensors.volt.toFixed(2);
+        if(el('val-battery')) el('val-battery').innerText = sensors.bat.toFixed(0) + '%'; 
+        if(el('batteryBar')) el('batteryBar').style.width = sensors.bat + '%';
+        if(el('val-charging')) { el('val-charging').innerText = sensors.charge ? "YES" : "NO"; el('val-charging').className = sensors.charge ? "text-lg font-bold text-emerald-400" : "text-lg font-bold text-slate-300"; }
+
+        let isCritical = false; let alertHTML = ""; let voiceReasons = [];
+        
+        if(sensors.temp > 30) { isCritical=true; voiceReasons.push("Temperature is too high."); alertHTML += `<div class="p-3 bg-rose-500/20 border border-rose-500 rounded-lg text-rose-200 text-sm">Critical Temperature!</div>`; if(!alertStates.tempH) { showToast("Warning: Temperature is too high!", "error"); alertStates.tempH = true; } } else { alertStates.tempH = false; }
+        if(sensors.temp < 22) { isCritical=true; voiceReasons.push("Temperature is too low."); alertHTML += `<div class="p-3 bg-cyan-500/20 border border-cyan-500 rounded-lg text-cyan-200 text-sm">Low Temperature Alert!</div>`; if(!alertStates.tempL) { showToast("Warning: Temperature is too low!", "warning"); alertStates.tempL = true; } } else { alertStates.tempL = false; }
+        if(sensors.ph > 8.2) { isCritical=true; voiceReasons.push("pH level is too high."); alertHTML += `<div class="p-3 bg-purple-500/20 border border-purple-500 rounded-lg text-purple-200 text-sm">High pH Level!</div>`; if(!alertStates.phH) { showToast("Warning: pH level is too high!", "error"); alertStates.phH = true; } } else { alertStates.phH = false; }
+        if(sensors.ph < 6.5) { isCritical=true; voiceReasons.push("pH level is too low."); alertHTML += `<div class="p-3 bg-amber-500/20 border border-amber-500 rounded-lg text-amber-200 text-sm">Low pH Level!</div>`; if(!alertStates.phL) { showToast("Warning: pH level is too low!", "warning"); alertStates.phL = true; } } else { alertStates.phL = false; }
+        if(sensors.tds > 1200) { isCritical=true; voiceReasons.push("TDS level is critical."); alertHTML += `<div class="p-3 bg-yellow-500/20 border border-yellow-500 rounded-lg text-yellow-200 text-sm">High TDS Levels!</div>`; if(!alertStates.tds) { showToast("Warning: High TDS Levels!", "error"); alertStates.tds = true; } } else { alertStates.tds = false; }
+        if(sensors.turb > 20) { isCritical=true; voiceReasons.push("Water turbidity is too high."); alertHTML += `<div class="p-3 bg-rose-500/20 border border-rose-500 rounded-lg text-rose-200 text-sm">High Turbidity!</div>`; if(!alertStates.turb) { showToast("Warning: Water turbidity is high!", "error"); alertStates.turb = true; } } else { alertStates.turb = false; }
+        if(status.filter_change_required) { isCritical=true; voiceReasons.push("Filter change required."); alertHTML += `<div class="p-3 bg-rose-500/20 border border-rose-500 rounded-lg text-rose-200 text-sm">Filter Change Required!</div>`; if(!alertStates.filter) { showToast("Warning: Filter Change Required immediately!", "error"); alertStates.filter = true; } } else { alertStates.filter = false; }
+        
+        if(isCritical) {
+          document.body.classList.add('critical-alert-bg'); 
+          if(!activeCritical) {
+              activeCritical = true;
+              const banner = el('criticalWarningBanner');
+              if(banner) {
+                  banner.classList.remove('hidden');
+                  // Trigger animation
+                  setTimeout(() => {
+                      banner.classList.remove('-translate-y-full', 'opacity-0');
+                      banner.classList.add('translate-y-0', 'opacity-100');
+                  }, 10);
+              }
+              if(el('criticalWarningText')) el('criticalWarningText').innerText = voiceReasons.join(" ");
+              speakAlert("Warning! " + voiceReasons.join(" "));
+              
+              // Hide banner after 3 seconds
+              setTimeout(() => { 
+                  if(banner) {
+                      banner.classList.remove('translate-y-0', 'opacity-100');
+                      banner.classList.add('-translate-y-full', 'opacity-0');
+                      setTimeout(() => banner.classList.add('hidden'), 500); // Wait for transition
+                  }
+              }, 3000);
+          }
+        } else {
+          document.body.classList.remove('critical-alert-bg'); 
+          const banner = el('criticalWarningBanner');
+          if(banner && !banner.classList.contains('hidden')) {
+              banner.classList.remove('translate-y-0', 'opacity-100');
+              banner.classList.add('-translate-y-full', 'opacity-0');
+              setTimeout(() => banner.classList.add('hidden'), 500);
+          }
+          alertHTML = `<div class="p-3 bg-emerald-500/20 border border-emerald-500 rounded-lg text-emerald-200 text-sm">All systems normal.</div>`; 
+          activeCritical = false; hasSpokenCritical = false;
+        }
+        if(el('alertsContainer')) el('alertsContainer').innerHTML = alertHTML;
+
+        // Apply Main Mode Controls
+        if(el('toggle-mode')) el('toggle-mode').checked = manualMode; 
+        if(el('modeLabel')) el('modeLabel').innerText = manualMode ? "Manual Mode" : "Auto Mode";
+        if(el('manualControls')) { if(manualMode) el('manualControls').classList.remove('opacity-50', 'pointer-events-none'); else el('manualControls').classList.add('opacity-50', 'pointer-events-none'); }
+        
+        if(el('toggle-fan')) el('toggle-fan').checked = fan; if(el('st-fan')) el('st-fan').innerText = fan ? "ON" : "OFF";
+        if(el('toggle-pump')) el('toggle-pump').checked = pump; if(el('st-pump')) el('st-pump').innerText = pump ? "ON" : "OFF";
+        if(el('toggle-heater')) el('toggle-heater').checked = heater; if(el('st-heater')) el('st-heater').innerText = heater ? "ON" : "OFF";
+        if(el('toggle-buzzer')) el('toggle-buzzer').checked = buzzer; if(el('st-buzzer')) el('st-buzzer').innerText = buzzer ? "ON" : "OFF";
+        
+        // Independent Light
+        if(el('toggle-light')) el('toggle-light').checked = light; if(el('st-light')) el('st-light').innerText = light ? "ON" : "OFF (Auto Mode)";
+        // IMPORTANT FIX: Only update the input if we aren't currently picking a color.
+        // We use lightColor as the source of truth, not tempLightColor which might be unapplied.
+        if(el('inp-light-color') && document.activeElement !== el('inp-light-color')) {
+            el('inp-light-color').value = lightColor;
+        }
+
+        updateLiveChartValue(); 
+      } catch(e) {}
+    }
+
+    function syncState() {
+      if(appMode === 'firebase' && firebaseDb) {
+        try { firebaseDb.ref(`${DEVICE_PATH}/controls`).update({ manual_mode: manualMode, manual_fan: fan, manual_pump: pump, manual_heater: heater, manual_buzzer: buzzer, manual_light: light, light_color: lightColor }).catch(()=>{}); } catch(e){}
+      }
+      updateUI(demoSensors, demoStatus);
+    }
+
+    // MAIN AUTO/MANUAL TOGGLE (DOES NOT AFFECT LIGHT)
+    function toggleManualMode(checked) { 
+        manualMode = checked; 
+        if(!manualMode) { fan = false; pump = false; heater = false; buzzer = false; } 
+        syncState(); showToast(`Mode changed to ${manualMode?'Manual':'Auto'}`, "info"); 
+    }
+    
+    // INDEPENDENT DEVICE TOGGLES
+    function toggleDevice(device, checked) { 
+        if(device==='fan') fan=checked; if(device==='pump') pump=checked; if(device==='heater') heater=checked; if(device==='buzzer') buzzer=checked; 
+        if(device==='light') {
+            light=checked;
+            // When turning light off, we might want to reset color, but let's keep the last applied color for better UX.
+            // if(!light) { lightColor = "#ffffff"; tempLightColor = "#ffffff"; }
+        } 
+        syncState(); 
+    }
+
+    // Triggered on input change (while picking color) to save temp state
+    function updateTempLightColor(val) {
+        tempLightColor = val;
+    }
+
+    // Triggered on "Apply" button click
+    function applyLightColor() {
+        if(el('inp-light-color')) { 
+            // Use the currently picked color, or the temp one if available
+            lightColor = tempLightColor || el('inp-light-color').value; 
+            if(!light) { light = true; } // Turn on light if applying color
+            syncState(); 
+            showToast(`Light color applied!`, "success"); 
+        }
+    }
+
+    function feedFishNow() { 
+      feedCount++; safeSet('aquaFeedCount', feedCount); 
+      if(el('feed-count-txt')) el('feed-count-txt').innerText = `Today's Feeds: ${feedCount}`; 
+      if(appMode === 'firebase' && firebaseDb) { try{ firebaseDb.ref(`${DEVICE_PATH}/controls/feed_now`).set(true); }catch(e){} } 
+      showToast("Feeding mechanism activated!", "success"); 
+      updateLiveChartValue();
+    }
+    
+    function triggerAutoFeedSequence(qty) {
+        let feedsDone = 0;
+        showToast(`Auto feeding schedule started! (${qty} portion/s)`, "info");
+        feedFishNow(); feedsDone++;
+        if(qty > 1) {
+            const feedInterval = setInterval(() => {
+                if(feedsDone >= qty) { clearInterval(feedInterval); return; }
+                feedFishNow();
+                feedsDone++;
+            }, 2500); 
+        }
+    }
+
+    // --- 11. VOICE CONTROL LOGIC ---
+    function toggleVoice() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!SR) return showToast("Voice control is not supported on this browser.", "error");
+
+        if(isListening) {
+            if(recognition) recognition.stop();
+            return;
+        }
+
+        recognition = new SR();
+        recognition.continuous = true; 
+        recognition.interimResults = true; 
+        let voiceSilenceTimeout = null;
+
+        recognition.onstart = () => { 
+            isListening=true; 
+            if(el('headerVoiceBtn')) el('headerVoiceBtn').classList.add('mic-active'); 
+            if(el('liveVoiceDisplay')) el('liveVoiceDisplay').classList.remove('hidden');
+            if(el('liveVoiceText')) {
+                el('liveVoiceText').style.opacity = 1;
+                el('liveVoiceText').innerText = "🗣️ Listening..."; 
+            }
+            // Fallback timeout
+            voiceSilenceTimeout = setTimeout(() => { if(isListening) recognition.stop(); }, 15000); 
+        };
+        
+        recognition.onend = () => { 
+            isListening=false; 
+            if(el('headerVoiceBtn')) el('headerVoiceBtn').classList.remove('mic-active'); 
+            clearTimeout(voiceSilenceTimeout);
+            setTimeout(() => { if(!isListening && el('liveVoiceText')) el('liveVoiceText').style.opacity = 0; }, 3000);
+        };
+        
+        recognition.onresult = (e) => {
+            clearTimeout(voiceSilenceTimeout);
+            voiceSilenceTimeout = setTimeout(() => { if(isListening) recognition.stop(); }, 5000); // Wait 5 seconds after last word
+
+            let interim = ''; let final = '';
+            for (let i = e.resultIndex; i < e.results.length; ++i) {
+                if (e.results[i].isFinal) final += e.results[i][0].transcript;
+                else interim += e.results[i][0].transcript;
+            }
+            
+            let textToShow = final || interim;
+            if(textToShow && el('liveVoiceText')) { el('liveVoiceText').innerText = "🗣️ " + textToShow; }
+
+            if(final) {
+                const cmd = final.toLowerCase();
+                let acted = false;
+                
+                if(cmd.includes('tell status') || cmd.includes('tank status') || cmd.includes('how is the water')) {
+                    let isBad = (demoSensors.temp > 30 || demoSensors.temp < 22 || demoSensors.ph > 8.2 || demoSensors.ph < 6.5 || demoSensors.tds > 1200 || demoSensors.turb > 20);
+                    if(isBad) { speakVoiceReply("The tank water condition is bad. Please check the alerts on your dashboard."); showToast("Tank Status: BAD", "warning"); }
+                    else { speakVoiceReply("The tank water condition is good. All systems are operating normally."); showToast("Tank Status: GOOD", "success"); }
+                    acted=true;
+                }
+                else if(cmd.includes('feed')) { if(appMode === 'firebase' && firebaseDb) { firebaseDb.ref(`${DEVICE_PATH}/commands/voice_feed`).set(true); } feedFishNow(); acted=true; }
+                else if(cmd.includes('pump on') || cmd.includes('turn on pump')) { manualMode=true; pump=true; if(appMode === 'firebase' && firebaseDb) { firebaseDb.ref(`${DEVICE_PATH}/commands/voice_pump`).set(true); } showToast("Pump ON", "success"); syncState(); acted=true; }
+                else if(cmd.includes('pump off') || cmd.includes('turn off pump')) { manualMode=true; pump=false; showToast("Pump OFF", "success"); syncState(); acted=true; }
+                else if(cmd.includes('heater on') || cmd.includes('turn on heater')) { manualMode=true; heater=true; showToast("Heater ON", "success"); syncState(); acted=true; }
+                else if(cmd.includes('heater off') || cmd.includes('turn off heater')) { manualMode=true; heater=false; showToast("Heater OFF", "success"); syncState(); acted=true; }
+                else if(cmd.includes('fan on') || cmd.includes('turn on fan')) { manualMode=true; fan=true; showToast("Fan ON", "success"); syncState(); acted=true; }
+                else if(cmd.includes('fan off') || cmd.includes('turn off fan')) { manualMode=true; fan=false; showToast("Fan OFF", "success"); syncState(); acted=true; }
+                else if(cmd.includes('buzzer on') || cmd.includes('turn on buzzer')) { manualMode=true; buzzer=true; showToast("Buzzer ON", "success"); syncState(); acted=true; }
+                else if(cmd.includes('buzzer off') || cmd.includes('turn off buzzer')) { manualMode=true; buzzer=false; showToast("Buzzer OFF", "success"); syncState(); acted=true; }
+                else if(cmd.includes('light on') || cmd.includes('lights on') || cmd.includes('turn on lights')) { light=true; showToast("Lights ON", "success"); syncState(); acted=true; }
+                else if(cmd.includes('light off') || cmd.includes('lights off') || cmd.includes('turn off lights')) { light=false; showToast("Lights OFF", "success"); syncState(); acted=true; }
+                else if(cmd.includes('auto mode') || cmd.includes('auto')) { toggleManualMode(false); acted=true; }
+                else if(cmd.includes('manual mode') || cmd.includes('manual')) { toggleManualMode(true); acted=true; }
+                else if(cmd.includes('fix alert') || cmd.includes('reset alert')) { demoSensors.temp = 26; demoSensors.tds = 600; demoSensors.ph = 7.2; demoSensors.turb = 5; syncState(); showToast("Conditions normal.", "success"); acted=true; }
+                else if(cmd.includes('test alert')) { demoSensors.temp = 32; demoSensors.tds = 1300; syncState(); showToast("Simulating Critical Alert!", "error"); acted=true; }
+                
+                if(!acted && final.trim() !== '') {
+                    showToast(`Command not recognized: "${safeHTML(final)}"`, "warning");
+                }
+                
+                if(acted) {
+                    setTimeout(()=> { recognition.stop(); }, 500);
+                }
+            }
+        };
+
+        recognition.start();
+    }
+
+    // --- 12. SETUP & BOOT ---
+    function openSetup() { if(el('setupModal')) { el('setupModal').classList.remove('hidden'); el('setupModal').classList.add('flex'); } if(el('btn-close-setup')) el('btn-close-setup').classList.remove('hidden'); }
+    function closeSetup() { if(el('setupModal')) { el('setupModal').classList.add('hidden'); el('setupModal').classList.remove('flex'); } }
+    
+    function saveSetup() {
+      const k = el('inp-apiKey') ? el('inp-apiKey').value.trim() : '';
+      const p = el('inp-projectId') ? el('inp-projectId').value.trim() : '';
+      const d = el('inp-databaseURL') ? el('inp-databaseURL').value.trim() : '';
+      
+      if(!k || !p || !d) return showToast("Please fill all Firebase fields", "error");
+      if(k.length < 15) return showToast("Invalid API Key format", "error");
+      if(!d.includes("firebaseio.com") && !d.includes("firebasedatabase.app")) return showToast("Invalid Database URL (Must contain firebaseio.com)", "error");
+
+      safeSet('aquaFirebaseConfig', JSON.stringify({ apiKey: k, projectId: p, databaseURL: d }));
+      closeSetup(); bootApp("firebase", { apiKey: k, projectId: p, databaseURL: d });
+    }
+    function skipSetup() { closeSetup(); bootApp("demo"); }
+
+    function bootApp(mode, config = null) {
+      appMode = mode;
+      if(el('app')) el('app').classList.remove('hidden');
+      initAquaticLife();
+      
+      if(demoEngineInterval) clearInterval(demoEngineInterval);
+      const badge = el('badge-mode');
+
+      if(mode === "firebase") {
+        try {
+          if(typeof firebase === 'undefined') throw new Error("Firebase not loaded");
+          if (!firebase.apps.length) firebase.initializeApp(config);
+          firebaseDb = firebase.database();
+          if(badge) { badge.innerHTML = `<i data-lucide="radio-tower" class="w-4 h-4"></i> Live Mode`; badge.className = "pill"; badge.style.borderColor = "rgba(16,185,129,.45)"; badge.style.color = "#a7f3d0"; }
+          showToast("Connected to Firebase Successfully!", "success");
+          
+          firebaseDb.ref(`${DEVICE_PATH}/sensors`).on('value', snap => {
+            const d = snap.val() || {};
+            demoSensors.temp = d.temperature_c ?? 26; demoSensors.ph = d.ph_value ?? 7; demoSensors.tds = d.tds_ppm ?? 600; demoSensors.turb = d.turbidity_sma ?? 5; demoSensors.days = d.predicted_days_to_maintenance ?? 10; demoSensors.volt = d.battery_voltage ?? 12; demoSensors.bat = d.battery_percent ?? 100; demoSensors.charge = !!d.charging_inferred;
+            updateUI(demoSensors, demoStatus);
+          });
+          firebaseDb.ref(`${DEVICE_PATH}/status`).on('value', snap => {
+            const s = snap.val() || {};
+            demoStatus.filter_change_required = !!s.filter_change_required;
+            updateUI(demoSensors, demoStatus);
+          });
+          firebaseDb.ref(`${DEVICE_PATH}/controls`).on('value', snap => {
+            const c = snap.val() || {};
+            manualMode = !!c.manual_mode; fan = !!c.manual_fan; pump = !!c.manual_pump; heater = !!c.manual_heater; buzzer = !!c.manual_buzzer; light = !!c.manual_light; lightColor = c.light_color || "#ffffff"; 
+            updateUI(demoSensors, demoStatus);
+          });
+        } catch(e) {
+          showToast("Firebase failed. Check connection & keys. Starting Demo.", "error");
+          bootApp("demo");
+        }
+      } else {
+        if(badge) { badge.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4"></i> Demo Mode`; badge.className = "pill pill-alert"; }
+        showToast("Started in Demo Mode. Connect DB for live data.", "warning");
+        demoEngineInterval = setInterval(() => {
+          demoSensors.temp += (Math.random()*0.8 - 0.4); demoSensors.ph += (Math.random()*0.2 - 0.1); demoSensors.tds += (Math.random()*40 - 20); demoSensors.turb += (Math.random()*2 - 1);
+          updateUI(demoSensors, demoStatus);
+        }, 2000);
+      }
+      safeIcons();
+    }
+
+    // --- 13. INITIALIZATION ---
+    window.onload = () => {
+      try {
+        appMode = 'setup'; safeIcons(); updateClock(); initTimePicker();
+        
+        const sTheme = safeGet('aquaTheme'); 
+        if(sTheme && sTheme.startsWith('custom:')) { const hex = sTheme.split(':')[1]; applyCustomThemeVars(hex); if(el('custom-theme-color')) el('custom-theme-color').value = hex; } 
+        else if(sTheme) applyThemeVars(sTheme); 
+        else applyThemeVars('ocean');
+
+        const sText = safeGet('aquaText'); if(sText) { changeTextSize(sText); if(el('sel-text-size')) el('sel-text-size').value = sText; }
+        const sImg = safeGet('aquaImg'); if(sImg) { applyImage(sImg); if(el('inp-tank-img')) el('inp-tank-img').value = sImg; }
+        
+        let fCount = parseInt(safeGet('aquaFeedCount') || 0); if(isNaN(fCount)) fCount = 0;
+        if(lastFeedDate !== new Date().toDateString()) { fCount = 0; safeSet('aquaFeedDate', new Date().toDateString()); safeSet('aquaFeedCount', fCount); }
+        feedCount = fCount; if(el('feed-count-txt')) el('feed-count-txt').innerText = `Today's Feeds: ${feedCount}`;
+        
+        // Boot Flow
+        let conf = null;
+        try { const sc = safeGet('aquaFirebaseConfig'); if(sc) conf = JSON.parse(sc); } catch(e) { safeRemove('aquaFirebaseConfig'); }
+        
+        if(conf && conf.apiKey && conf.projectId && conf.databaseURL) {
+          if(el('inp-apiKey')) el('inp-apiKey').value = conf.apiKey;
+          if(el('inp-projectId')) el('inp-projectId').value = conf.projectId;
+          if(el('inp-databaseURL')) el('inp-databaseURL').value = conf.databaseURL;
+          openSetup(); showToast("Previous config found. Click Connect to proceed.", "info");
+        } else {
+          if(el('inp-apiKey')) el('inp-apiKey').value = ""; if(el('inp-projectId')) el('inp-projectId').value = ""; if(el('inp-databaseURL')) el('inp-databaseURL').value = "";
+          openSetup();
+        }
+      } catch (err) {}
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "sraqua-guard",
+  "version": "1.0.0",
+  "description": "SRAqua Guard - IoT Smart Aquarium System",
+  "main": "main.js",
+  "author": "WRSCN",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^latest",
+    "electron-builder": "^latest"
+  },
+  "build": {
+    "appId": "com.wrscn.sraquaguard",
+    "productName": "SRAqua Guard",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/logo.ico"
+    }
+  }
+}

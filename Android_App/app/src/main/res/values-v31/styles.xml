@@ -1,0 +1,13 @@
+<resources>
+    <style name="Theme.SRAquaGuard" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#22d3ee</item>
+        <item name="android:windowSplashScreenBackground">#0f172a</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/sraqua_logo</item>
+        <item name="android:statusBarColor">#0f172a</item>
+        <item name="android:navigationBarColor">#0f172a</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:windowBackground">@color/sraqua_slate</item>
+    </style>
+</resources>

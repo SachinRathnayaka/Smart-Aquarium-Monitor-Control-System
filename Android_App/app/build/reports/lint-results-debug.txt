@@ -1,0 +1,95 @@
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:4: Warning: Attribute resizeableActivity is only used in API level 24 and higher (current min is 23) [UnusedAttribute]
+    <application android:theme="@style/Theme.SRAquaGuard" android:label="SRAqua Guard" android:icon="@drawable/sraqua_logo" android:usesCleartextTraffic="false" android:hardwareAccelerated="true" android:resizeableActivity="true">
+                                                                                                                                                                                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedAttribute":
+   This check finds attributes set in XML files that were introduced in a
+   version newer than the oldest version targeted by your application (with
+   the minSdkVersion attribute).
+
+   This is not an error; the application will simply ignore the attribute.
+   However, if the attribute is important to the appearance or functionality
+   of your application, you should consider finding an alternative way to
+   achieve the same result with only available attributes, and then you can
+   optionally create a copy of the layout in a layout-vNN folder which will be
+   used on API NN or higher where you can take advantage of the newer
+   attribute.
+
+   Note: This check does not only apply to attributes. For example, some tags
+   can be unused too, such as the new <tag> element in layouts introduced in
+   API 21.
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5: Warning: Expecting android:screenOrientation="unspecified" or "fullSensor" for this activity so the user can use the application in any orientation and provide a great experience on Chrome OS devices [LockedOrientationActivity]
+        <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="true">
+                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "LockedOrientationActivity":
+   The <activity> element should not be locked to any orientation so that
+   users can take advantage of the multi-window environments and larger
+   screens available on Android. To fix the issue, consider declaring the
+   corresponding activity element with `screenOrientation="unspecified"or
+   "fullSensor"` attribute.
+
+   https://developer.android.com/topic/arc/window-management
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\AndroidManifest.xml:5: Warning: Should not restrict activity to fixed orientation. This may not be suitable for different form factors, causing the app to be letterboxed. [DiscouragedApi]
+        <activity android:name=".MainActivity" android:screenOrientation="portrait" android:exported="true">
+                                               ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DiscouragedApi":
+   Discouraged APIs are allowed and are not deprecated, but they may be unfit
+   for common use (e.g. due to slow performance or subtle behavior).
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\java\com\wrscn\sraquaguard\MainActivity.java:23: Warning: Using setJavaScriptEnabled can introduce XSS vulnerabilities into your application, review carefully [SetJavaScriptEnabled]
+        s.setJavaScriptEnabled(true);
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "SetJavaScriptEnabled":
+   Your code should not invoke setJavaScriptEnabled if you are not sure that
+   your app really requires JavaScript support.
+
+   https://goo.gle/SetJavaScriptEnabled
+   https://developer.android.com/training/articles/security-tips
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\res\values\colors.xml:1: Warning: The resource R.color.sraqua_cyan appears to be unused [UnusedResources]
+<resources><color name="sraqua_slate">#0f172a</color><color name="sraqua_cyan">#22d3ee</color></resources>
+                                                            ~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\res\drawable\sraqua_logo.png: Warning: Launcher icons should not fill every pixel of their square region; see the design guide for details [IconLauncherShape]
+
+   Explanation for issues of type "IconLauncherShape":
+   According to the Android Design Guide
+   (https://d.android.com/r/studio-ui/designer/material/iconography) your
+   launcher icons should "use a distinct silhouette", a "three-dimensional,
+   front view, with a slight perspective as if viewed from above, so that
+   users perceive some depth."
+
+   The unique silhouette implies that your launcher icon should not be a
+   filled square.
+
+C:\Users\Sachin\Desktop\New folder (2)\SRAquaGuard-Android\app\src\main\res\drawable\sraqua_logo.png: Warning: Found bitmap drawable res/drawable/sraqua_logo.png in densityless folder [IconLocation]
+
+   Explanation for issues of type "IconLocation":
+   The res/drawable folder is intended for density-independent graphics such
+   as shapes defined in XML. For bitmaps, move it to drawable-mdpi and
+   consider providing higher and lower resolution versions in drawable-ldpi,
+   drawable-hdpi and drawable-xhdpi. If the icon really is density independent
+   (for example a solid color) you can place it in drawable-nodpi.
+
+   https://developer.android.com/guide/practices/screens_support.html
+
+0 errors, 7 warnings

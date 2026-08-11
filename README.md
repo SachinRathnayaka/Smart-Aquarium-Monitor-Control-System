@@ -510,10 +510,10 @@ The Electron window opens at **1280 × 800** (minimum 1000 × 650) and loads `in
 
 Pre-compiled binaries are published through the **GitHub Releases** page. Check the Releases tab for the latest available versions:
 
-| Platform | Expected File | Notes |
+| Platform | File | Notes |
 |---|---|---|
-| Android | `SRAqua-Guard-v1.0.apk` | Sideload — enable "Install from unknown sources" in device settings |
-| Windows | `SRAqua-Guard-Setup-v1.0.exe` | NSIS installer — run and follow on-screen prompts |
+| Android | `SRAqua_Guard_v1.0.apk` | Sideload — enable "Install from unknown sources" in device settings |
+| Windows | `SRAqua Guard Setup 1.0.0.exe` | NSIS installer — run and follow on-screen prompts |
 
 👉 **[View GitHub Releases](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System/releases)**
 

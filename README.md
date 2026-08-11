@@ -19,7 +19,7 @@
 ![KiCad](https://img.shields.io/badge/KiCad-10.0.3-314CB0?style=for-the-badge&logo=kicad&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
 
-**Author:** [Sachin Rathnayaka (WRSCN)](https://github.com/SachinRathnayaka) &nbsp;·&nbsp; **Repository:** [Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System)
+**Author:** [Sachin Rathnayaka (WRSCN)](https://github.com/SachinRathnayaka) &nbsp;·&nbsp; **Repository:** [Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System) &nbsp;·&nbsp; **Live Demo:** [Web Dashboard](https://sachinrathnayaka.github.io/Smart-Aquarium-Monitor-Control-System/)
 
 </div>
 
@@ -178,6 +178,9 @@ The firmware is engineered with a **fully non-blocking `millis()` architecture**
 - Solar charging input terminal on PCB (J15)
 
 ### 🖥️ Web Dashboard
+
+👉 **[🚀 Try Live Web Dashboard Here](https://sachinrathnayaka.github.io/Smart-Aquarium-Monitor-Control-System/)** *(Fully functional Demo Mode available — no hardware required!)*
+
 - Pure single-file HTML5/CSS3/JavaScript — **zero build step, zero dependencies to install**
 - Firebase Realtime Database v10.8.0 SDK — real-time bidirectional sync
 - **4 built-in themes:** Ocean · Cyber · Emerald · Sunset + custom hex color picker

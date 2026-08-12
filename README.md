@@ -745,18 +745,18 @@ Full BOM: [`Docs/Bill_of_Materials.md`](Docs/Bill_of_Materials.md) · CSV: [`Doc
 
 **74 components across 41 line items** — designed exclusively with through-hole parts for DIY-friendly assembly.
 
-| Category | Key Parts | Qty |
-|---|---|---|
-| Microcontroller | ESP32-WROOM-32 / DevKitC (38-pin) | 1 |
-| Transistors | BC547 NPN (relay drivers) | 4 |
-| Relays | SANYOU SRD Form-C (5 V coil, 10 A / 250 VAC) | 3 |
-| Diodes | SR560 Schottky (4×) · 1N4007 rectifier (4×) · RS505 bridge (1×) | 9 |
-| Capacitors | 100 nF ceramic (4×) · 470 µF electrolytic (1×) · 1000 µF (3×) · 10 µF (1×) | 9 |
-| Resistors | 330 Ω – 30 kΩ (various, ¼ W 5%) | 22 |
-| Fuses | 5 A / 250 V slow-blow, 5×20 mm | 2 |
-| Power Module | LM2596 / MP1584 DC-DC buck (12 V → 5 V) | 1 |
-| Connectors | Screw terminals (5.08 mm) + pin headers (2.54 mm) | 22 |
-| Switch | 6×6 mm tactile push button (Reset/Boot) | 1 |
+| Category | Key Parts |
+|---|---|
+| Microcontroller | ESP32-WROOM-32 / DevKitC (38-pin) |
+| Transistors | BC547 NPN (relay drivers) |
+| Relays | SANYOU SRD Form-C (5 V coil, 10 A / 250 VAC) |
+| Diodes | SR560 Schottky (4×) · 1N4007 rectifier (4×) · RS505 bridge (1×) | 
+| Capacitors | 100 nF ceramic (4×) · 470 µF electrolytic (1×) · 1000 µF (3×) · 10 µF (1×) |
+| Resistors | 330 Ω – 30 kΩ (various, ¼ W 5%) |
+| Fuses | 5 A / 250 V slow-blow, 5×20 mm |
+| Power Module | LM2596 / MP1584 DC-DC buck (12 V → 5 V) |
+| Connectors | Screw terminals (5.08 mm) + pin headers (2.54 mm) |
+| Switch | 6×6 mm tactile push button (Reset/Boot) |
 
 ---
 

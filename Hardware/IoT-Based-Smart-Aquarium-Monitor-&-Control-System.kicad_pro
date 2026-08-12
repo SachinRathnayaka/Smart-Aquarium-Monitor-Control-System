@@ -537,7 +537,7 @@
     "last_paths": {
       "idf": "",
       "netlist": "",
-      "plot": "../../",
+      "plot": "Gerber_Files/new gerber/",
       "specctra_dsn": "",
       "vrml": ""
     },
@@ -687,7 +687,7 @@
   "sheets": [
     [
       "55ce9f02-28fb-4ff5-9b3e-026ff46503a3",
-      "Smart-Aquarium-Monitor-&-Control-System"
+      "IoT-Based-Smart-Aquarium-Monitor-&-Control-System"
     ]
   ],
   "text_variables": {},

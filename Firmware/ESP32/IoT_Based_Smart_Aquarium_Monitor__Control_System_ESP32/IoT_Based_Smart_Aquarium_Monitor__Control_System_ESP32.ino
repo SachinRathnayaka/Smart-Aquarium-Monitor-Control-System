@@ -95,15 +95,10 @@
 #define I2C_SCL_PIN              22
 
 // =======================================================
-// 2) PRIVACY & SECURITY (PLACEHOLDERS ONLY)
+// 2) PRIVACY & SECURITY
 // =======================================================
-const char* WIFI_SSID     = "YOUR_WIFI_SSID";
-const char* WIFI_PASSWORD = "YOUR_WIFI_PASSWORD";
-
-#define API_KEY       "YOUR_FIREBASE_API_KEY"
-#define DATABASE_URL  "YOUR_FIREBASE_DATABASE_URL"
-#define USER_EMAIL    "YOUR_FIREBASE_USER_EMAIL"
-#define USER_PASSWORD "YOUR_FIREBASE_USER_PASSWORD"
+// Credentials are kept in secrets.h and should NOT be committed to GitHub.
+#include "secrets.h"
 
 #define DB_ROOT "/devices/aquaSense"
 

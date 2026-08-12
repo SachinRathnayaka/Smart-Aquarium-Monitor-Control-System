@@ -10,8 +10,8 @@
     "build": "electron-builder"
   },
   "devDependencies": {
-    "electron": "^latest",
-    "electron-builder": "^latest"
+    "electron": "^35.0.0",
+    "electron-builder": "^25.0.0"
   },
   "build": {
     "appId": "com.wrscn.sraquaguard",

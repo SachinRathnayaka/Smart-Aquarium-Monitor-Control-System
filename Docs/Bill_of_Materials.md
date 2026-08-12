@@ -6,7 +6,7 @@
 **Module:** Fundamentals of Computing (IT1140) — Y1S1  
 **Schematic Rev:** 1.0  
 **EDA Tool:** KiCad 10.0.3  
-**License:** MIT  
+**License:** CERN-OHL-S-2.0  
 **Repository:** [github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System)  
 
 ---

@@ -10,6 +10,8 @@
 ---
 
 ![ESP32](https://img.shields.io/badge/ESP32-WROOM--32-E7352C?style=for-the-badge&logo=espressif&logoColor=white)
+![C++](https://img.shields.io/badge/C%2B%2B-Firmware-00599C?style=for-the-badge&logo=cplusplus&logoColor=white)
+![Arduino](https://img.shields.io/badge/Arduino-IDE-00979D?style=for-the-badge&logo=arduino&logoColor=white)
 ![Firebase](https://img.shields.io/badge/Firebase-RTDB-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
 ![Electron](https://img.shields.io/badge/Electron-Windows--App-47848F?style=for-the-badge&logo=electron&logoColor=white)
 ![Android](https://img.shields.io/badge/Android-minSdk%2023-3DDC84?style=for-the-badge&logo=android&logoColor=white)
@@ -17,7 +19,7 @@
 ![CSS3](https://img.shields.io/badge/CSS3-Glassmorphism-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6+-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![KiCad](https://img.shields.io/badge/KiCad-10.0.3-314CB0?style=for-the-badge&logo=kicad&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
+![License](https://img.shields.io/badge/License-Multi--Licensed-green?style=for-the-badge&logo=opensourceinitiative&logoColor=white)
 
 **Author:** [Sachin Rathnayaka](https://github.com/SachinRathnayaka) &nbsp;·&nbsp; **Repo:** [Smart-Aquarium-Monitor-Control-System](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System) &nbsp;·&nbsp; **Live Demo:** [Web Dashboard](https://sachinrathnayaka.github.io/Smart-Aquarium-Monitor-Control-System/)
 
@@ -49,7 +51,7 @@
 - [Bill of Materials](#-bill-of-materials-summary)
 - [Roadmap](#️-roadmap)
 - [Contributing](#-contributing)
-- [License](#-license)
+- [Licensing](#-licensing)
 
 ---
 
@@ -162,7 +164,7 @@ The firmware is engineered with a **fully non-blocking `millis()` architecture**
 
 ### 🎙️ Voice Assistant
 - **8 core command groups** (Status · Feed · Pump · Heater · Fan · Lights · Buzzer · Mode) plus Demo Mode test commands, via the **Web Speech API** — no cloud API key required
-- Live transcription displayed in the dashboard header with 5-second silence auto-stop
+- Live transcription displayed in the dashboard header (auto-stops after 15 s of silence, or 5 s after the last detected word)
 - Voice TTS feedback: browser speaks alert summaries aloud
 
 ### 📅 Auto Fish Feeder
@@ -797,12 +799,13 @@ Please include your ESP32 core version, Arduino IDE version, and relevant serial
 
 ---
 
-## 📄 License
+## 📜 Licensing
 
-This project is licensed under the **MIT License** — free for personal and commercial use, modification, and distribution.
+This project utilizes a multi-licensing model to cover software, hardware, and documentation appropriately:
 
-Licensed under the MIT License.
-See [LICENSE](LICENSE) for the full license text.
+- 💻 **Software & Firmware:** Licensed under the [MIT License](LICENSE) (ESP32 Firmware, Web Dashboard, Android & Windows Apps).
+- 🛠️ **Hardware Design:** Licensed under the [CERN-OHL-S-2.0](LICENSE-HARDWARE) (KiCad Schematics & PCB Layouts).
+- 📄 **Documentation & Media:** Licensed under [CC BY 4.0](LICENSE-DOCS) (Guides, Images, and Diagrams).
 
 Copyright © 2026 Sachin Rathnayaka (WRSCN)
 
@@ -814,6 +817,6 @@ Made with ❤️ by **[Sachin Rathnayaka (WRSCN)](https://github.com/SachinRathn
 
 ⭐ If this project helped you, please consider giving it a star on GitHub!
 
-[![GitHub Stars](https://img.shields.io/github/stars/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System?style=social)](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System/stargazers)
+[![GitHub Stars](https://img.shields.io/github/stars/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System?style=for-the-badge&logo=github&color=FFD700)](https://github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System/stargazers)
 
 </div>

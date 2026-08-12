@@ -14,7 +14,7 @@
 		(company "Sri Lanka Institute of Information Technology (SLIIT)")
 		(comment 1 "Module: Fundamentals of Computing (IT1140) - Y1S1")
 		(comment 2 "Designed by: Sachin Rathnayaka (WRSCN)")
-		(comment 3 "License: MIT License")
+		(comment 3 "License: CERN-OHL-S-2.0")
 		(comment 4 "Repo: github.com/SachinRathnayaka/Smart-Aquarium-Monitor-Control-System")
 		(comment 5 "Sheet Name: Main")
 	)
@@ -134,7 +134,7 @@
 			(mirror no)
 			(drillshape 0)
 			(scaleselection 1)
-			(outputdirectory "Gerber_Files/")
+			(outputdirectory "Gerber_Files/new gerber/")
 		)
 	)
 	(footprint "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P10.16mm_Horizontal"
@@ -30352,7 +30352,7 @@
 			(justify left bottom)
 		)
 	)
-	(gr_text "License: MIT License"
+	(gr_text "License: CERN-OHL-S-2.0"
 		(locked yes)
 		(at 162.79 76.95 0)
 		(layer "F.Cu")
@@ -30380,9 +30380,9 @@
 			(justify bottom)
 		)
 	)
-	(gr_text "License: MIT License"
+	(gr_text "License: CERN-OHL-S-2.0"
 		(locked yes)
-		(at 168.14 93.17 0)
+		(at 169.3 93.17 0)
 		(layer "B.Cu")
 		(uuid "8bf8895d-c831-412f-91f6-e7402e396f1f")
 		(effects
@@ -38964,6 +38964,7 @@
 		)
 	)
 	(zone
+		(locked yes)
 		(layer "B.Cu")
 		(uuid "bc91459d-1dab-4936-83cb-787a8b1e626f")
 		(hatch edge 0.5)

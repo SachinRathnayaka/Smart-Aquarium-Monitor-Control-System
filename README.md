@@ -743,7 +743,7 @@ The PCB accepts a standard **ESP32-WROOM-32 / ESP32-DevKitC 38-pin** module moun
 
 Full BOM: [`Docs/Bill_of_Materials.md`](Docs/Bill_of_Materials.md) · CSV: [`Docs/Components_List_BOM.csv`](Docs/Components_List_BOM.csv)
 
-**74 components across 41 line items** — designed exclusively with through-hole parts for DIY-friendly assembly.
+**The hardware design uses exclusively through-hole components to support DIY-friendly assembly.**
 
 | Category | Key Parts |
 |---|---|
